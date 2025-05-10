@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Benzo Taper Schedule Generator</title>
+  <style>
+    label { display: inline-block; width: 100px; margin: 4px; }
+    fieldset { margin: 12px 0; padding: 8px; }
+    .hidden { display: none; }
+    .error { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Benzo Taper Schedule Generator</h1>
+
+  <form method="post" id="taper-form">
+    <div>
+      <label>Select the medication that is being tapered:</label>
+      <select name="med1" id="med1-select">
+        <option value="" disabled selected>-- choose --</option>
+        {% for m in meds %}
+          <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div id="dose1-section" class="hidden">
+      <fieldset>
+        <legend>
+          Enter the milligram dose of <span id="med1-name"></span>
+          that is being taken at the specified times each day.<br>
+          Use “Midday” for TID dosing.
+        </legend>
+        {% for tod in ["Morning","Midday","Afternoon","Night"] %}
+          <label>{{ tod }}</label>
+          <input type="number" step="0.5" name="{{ tod }}_1" /><br>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    <div id="diazepam-question" class="hidden">
+      <label>Is the patient also taking diazepam?</label>
+      <label><input type="radio" name="diazepam" value="no" checked /> no</label>
+      <label><input type="radio" name="diazepam" value="yes" /> yes</label>
+    </div>
+
+    <div id="dose2-section" class="hidden">
+      <fieldset>
+        <legend>
+          Enter the milligram dose of diazepam that is being taken…<br>
+          Use “Midday” for TID dosing.
+        </legend>
+        {% for tod in ["Morning","Midday","Afternoon","Night"] %}
+          <label>{{ tod }}</label>
+          <input type="number" step="0.5" name="{{ tod }}_2" /><br>
+        {% endfor %}
+      </fieldset>
+    </div>
+
+    <div id="date-section" class="hidden">
+      <label>Start date of taper:</label>
+      <input name="start_date" placeholder="M/D/Y" />
+    </div>
+
+    <p id="submit-section" class="hidden">
+      <button type="submit">Run Schedule Generator</button>
+    </p>
+  </form>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  {% if schedule %}
+    <h2>Generated Taper Schedule</h2>
+    <table border="1" cellpadding="4">
+      <tr>
+        <th>Step</th>
+        <th>Medication</th>
+        <th>Dose</th>
+        <th>Instructions</th>
+        <th>Quantity</th>
+      </tr>
+      {% for item in schedule %}
+        <tr>
+          <td>{{ item.step }}</td>
+          <td>{{ item.medication }}</td>
+          <td>{{ item.dose }}mg</td>
+          <td>{{ item.instructions }}</td>
+          <td>{{ item.quantity }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  <script>
+    const medSelect      = document.getElementById('med1-select');
+    const dose1Section   = document.getElementById('dose1-section');
+    const diazQuestion   = document.getElementById('diazepam-question');
+    const dose2Section   = document.getElementById('dose2-section');
+    const dateSection    = document.getElementById('date-section');
+    const submitSection  = document.getElementById('submit-section');
+    const med1NameSpan   = document.getElementById('med1-name');
+    const diazRadios     = document.getElementsByName('diazepam');
+
+    function updateVisibility() {
+      const med1 = medSelect.value;
+      if (med1) {
+        med1NameSpan.textContent = med1;
+        dose1Section.classList.remove('hidden');
+        diazQuestion.classList.remove('hidden');
+        dateSection.classList.remove('hidden');
+        submitSection.classList.remove('hidden');
+      } else {
+        dose1Section.classList.add('hidden');
+        diazQuestion.classList.add('hidden');
+        dose2Section.classList.add('hidden');
+        dateSection.classList.add('hidden');
+        submitSection.classList.add('hidden');
+      }
+      updateDiazepamSection();
+    }
+
+    function updateDiazepamSection() {
+      const yes = Array.from(diazRadios)
+                       .find(r => r.value === 'yes' && r.checked);
+      if (yes) {
+        dose2Section.classList.remove('hidden');
+      } else {
+        dose2Section.classList.add('hidden');
+      }
+    }
+
+    medSelect.addEventListener('change', updateVisibility);
+    diazQuestion.addEventListener('change', updateDiazepamSection);
+    window.addEventListener('DOMContentLoaded', updateVisibility);
+  </script>
+</body>
+</html>
