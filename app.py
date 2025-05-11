@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request
 from datetime import datetime
-
 import taper_utils
 
-EQUIV_TO_DIAZEPAM = {
+# Diazepam-equivalent conversion factors
+equiv_to_diazepam = {
     'alprazolam': 20.0,
     'lorazepam': 10.0,
     'clonazepam': 20.0,
@@ -18,7 +18,7 @@ EQUIV_TO_DIAZEPAM = {
 app = Flask(__name__)
 
 def calculate_equivalent_dose(med, dose):
-    return dose * EQUIV_TO_DIAZEPAM.get(med, 0.0)
+    return dose * equiv_to_diazepam.get(med, 0.0)
 
 def total_diazepam_equiv(doses, med):
     return sum(calculate_equivalent_dose(med, d) for d in doses.values())
@@ -33,7 +33,9 @@ def flatten_schedule_doses(times):
             result.setdefault(med, {})[tod] = result.setdefault(med, {}).get(tod, 0) + dose
     return result
 
+# Determine which taper step best matches the user's current regimen
 def find_matching_step(med1, doses1, med2=None, doses2=None):
+    # 1. Build linearized order of all steps
     order = []
     seen = set()
     for root in sorted(k for k in taper_utils.all_steps if k.endswith("_0")):
@@ -42,83 +44,102 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
             seen.add(curr)
             order.append(curr)
             _, _, nxt = taper_utils.all_steps[curr]
-            if nxt == "END":
-                break
+            if nxt == "END": break
             curr = nxt
 
-    user_diazepam_equiv = total_diazepam_equiv(doses1, med1) + (total_diazepam_equiv(doses2, med2) if med2 else 0)
-
-    best_step = None
-    best_score = -float('inf')
-
+    # 2. Filter steps to those containing med1
+    filtered = []
     for step in order:
         _, times, _ = taper_utils.all_steps[step]
-        sched_doses = flatten_schedule_doses(times)
+        sched = flatten_schedule_doses(times)
+        if med1 in sched:
+            filtered.append(step)
+    order = filtered
 
-        step_diazepam_equiv = 0.0
-        dose_match_score = 0
-        med_match_score = 0
+    # 3. Compute user's total and fractions
+    user_eq = total_diazepam_equiv(doses1, med1)
+    user_med2_eq = 0.0
+    if med2:
+        user_med2_eq = total_diazepam_equiv(doses2, med2)
+        user_eq += user_med2_eq
+    # Range filter: up to +2mg, down to -20mg
+    candidates = []
+    for step in order:
+        _, times, _ = taper_utils.all_steps[step]
+        sched = flatten_schedule_doses(times)
+        # compute total eq
+        step_eq = sum(calculate_equivalent_dose(m, d) for m, tods in sched.items() for d in tods.values())
+        if user_eq - 20 <= step_eq <= user_eq + 2:
+            candidates.append((step, sched, step_eq))
+    # If none in range, fall back to order
+    if not candidates:
+        candidates = [(step, flatten_schedule_doses(taper_utils.all_steps[step][1]),
+                       sum(calculate_equivalent_dose(m, d)
+                           for m, tods in flatten_schedule_doses(taper_utils.all_steps[step][1]).items()
+                           for d in tods.values())) for step in order]
 
-        for med, user_doses in ((med1, doses1), (med2, doses2) if med2 else (None, None)):
-            if med is None:
-                continue
+    # 4. Compute user's med fractions and time-of-day eq
+    user_frac1 = total_diazepam_equiv(doses1, med1) / user_eq if user_eq else 0
+    user_frac2 = user_med2_eq / user_eq if user_eq else 0
+    user_tod_eq = {
+        tod: calculate_equivalent_dose(med1, doses1.get(tod, 0)) +
+             (calculate_equivalent_dose(med2, doses2.get(tod, 0)) if med2 else 0)
+        for tod in ("Morning","Midday","Afternoon","Night")
+    }
 
-            sched = sched_doses.get(med, {})
-            if sched:
-                med_match_score += 1
-                for tod, user_dose in user_doses.items():
-                    sched_dose = sched.get(tod, 0.0)
-                    if abs(sched_dose - user_dose) < 1e-6:
-                        dose_match_score += 1
-                    elif sched_dose > user_dose:
-                        dose_match_score -= 2
-            else:
-                dose_match_score -= 2
+    best_score = -float('inf')
+    best_step  = None
+    # scoring weights
+    WEIGHT_FRAC = 100.0
+    WEIGHT_TIME = 10.0
 
-        for med, tod_doses in sched_doses.items():
-            for dose in tod_doses.values():
-                step_diazepam_equiv += calculate_equivalent_dose(med, dose)
+    for step, sched, step_eq in candidates:
+        # fraction match
+        step_med1_eq = sum(calculate_equivalent_dose(med1, d)
+                            for d in sched.get(med1, {}).values())
+        step_med2_eq = sum(calculate_equivalent_dose(med2, d)
+                            for d in sched.get(med2, {}).values()) if med2 else 0.0
+        frac1 = step_med1_eq / step_eq if step_eq else 0
+        frac2 = step_med2_eq / step_eq if step_eq else 0
+        frac_score = 1.0 - (abs(frac1 - user_frac1) + abs(frac2 - user_frac2))
 
-        diazepam_diff = abs(step_diazepam_equiv - user_diazepam_equiv)
-        diazepam_penalty = diazepam_diff if diazepam_diff > 1e-6 else 0
+        # time-of-day similarity
+        time_diff_sum = 0.0
+        for tod in ("Morning","Midday","Afternoon","Night"):
+            step_tod_eq = sum(calculate_equivalent_dose(m, d)
+                               for m, d in ((m, sched[m].get(tod, 0)) for m in sched))
+            time_diff_sum += abs(step_tod_eq - user_tod_eq[tod])
+        time_score = -time_diff_sum
 
-        score = (10 * med_match_score + 5 * dose_match_score) - diazepam_penalty
-
+        score = WEIGHT_FRAC * frac_score + WEIGHT_TIME * time_score
         if score > best_score:
             best_score = score
-            best_step = step
+            best_step  = step
 
+    # 5. Return the next step (or itself if END)
     if best_step:
         _, _, nxt = taper_utils.all_steps[best_step]
         return nxt if nxt and nxt != "END" else best_step
     return None
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def index():
-    meds = sorted(taper_utils.medication_doses.keys())
+    meds    = sorted(taper_utils.medication_doses.keys())
     schedule = None
-    error = None
+    error    = None
 
     if request.method == "POST":
-        med1 = request.form.get("med1")
+        med1           = request.form.get("med1")
         start_date_str = request.form.get("start_date")
-
         if med1 and start_date_str:
-            doses1 = {
-                tod: float(request.form.get(f"{tod}_1") or 0)
-                for tod in ("Morning", "Midday", "Afternoon", "Night")
-            }
-
+            doses1 = { tod: float(request.form.get(f"{tod}_1") or 0)
+                       for tod in ("Morning","Midday","Afternoon","Night") }
             if request.form.get("diazepam") == "yes":
                 med2 = "diazepam"
-                doses2 = {
-                    tod: float(request.form.get(f"{tod}_2") or 0)
-                    for tod in ("Morning", "Midday", "Afternoon", "Night")
-                }
+                doses2 = { tod: float(request.form.get(f"{tod}_2") or 0)
+                           for tod in ("Morning","Midday","Afternoon","Night") }
             else:
-                med2 = None
-                doses2 = None
-
+                med2 = None; doses2 = None
             try:
                 start_date = datetime.strptime(start_date_str, "%m/%d/%Y")
             except ValueError:
@@ -129,13 +150,10 @@ def index():
                     error = "No matching taper step found for those doses."
                 else:
                     schedule = []
-                    for step in taper_utils.get_schedule_steps(start_step, start_date):
-                        schedule.extend(taper_utils.prescriptions_for_step(step))
+                    for s in taper_utils.get_schedule_steps(start_step, start_date):
+                        schedule.extend(taper_utils.prescriptions_for_step(s))
 
-    return render_template("index.html",
-                           meds=meds,
-                           schedule=schedule,
-                           error=error)
+    return render_template("index.html", meds=meds, schedule=schedule, error=error)
 
 if __name__ == "__main__":
     app.run(debug=True)
