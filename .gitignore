@@ -1,3 +1,6 @@
+# Ignore any directory with "venv" in its name, anywhere in the tree
+*venv*/
+
 # Compiled source #
 ###################
 *.com
