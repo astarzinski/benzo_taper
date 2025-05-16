@@ -427,7 +427,6 @@ def num_to_words(n):
 time_preps = {
     'Morning': 'in the Morning',
     'Midday': 'at Midday',
-    'Afternoon': 'in the Afternoon',
     'Night': 'at Night'
 }
 
@@ -584,7 +583,7 @@ def prescriptions_for_step(step):
 
             # build plain-English phrases
             phrases = []
-            for tod in ("Morning","Midday","Afternoon","Night"):
+            for tod in ("Morning","Midday","Night"):
                 if tod not in time_totals:
                     continue
                 total = time_totals[tod]
