@@ -67,8 +67,8 @@
     <!-- primary drug dosing -->
     <div id="dose1-section" class="hidden">
       <fieldset>
-        <legend id="dose1-legend"></legend>
-        {% for tod in ["Morning","Midday","Afternoon","Night"] %}
+        <legend>Enter the milligram dose of the selected medication at each time of day.</legend>
+        {% for tod in ["Morning","Midday","Night"] %}
           <div class="tod-row" data-tod="{{ tod }}">
             <label>{{ tod }}</label>
             <input type="number" step="0.25" name="{{ tod }}_1" /><br>
@@ -88,7 +88,7 @@
     <div id="dose2-section" class="hidden">
       <fieldset>
         <legend>Enter the milligram dose of diazepam being taken:</legend>
-        {% for tod in ["Morning","Midday","Afternoon","Night"] %}
+        {% for tod in ["Morning","Midday","Night"] %}
           <div class="tod-row">
             <label>{{ tod }}</label>
             <input type="number" step="0.25" name="{{ tod }}_2" /><br>
@@ -137,22 +137,18 @@
   <script>
     const medSelect     = document.getElementById('med1-select');
     const dose1Section  = document.getElementById('dose1-section');
-    const dose1Legend   = document.getElementById('dose1-legend');
     const diazQuestion  = document.getElementById('diazepam-question');
     const dose2Section  = document.getElementById('dose2-section');
     const dateSection   = document.getElementById('date-section');
     const submitSection = document.getElementById('submit-section');
     const diazRadios    = document.getElementsByName('diazepam');
-    const specialDrugs  = ['zopiclone','temazepam','nitrazepam'];
 
     function updateVisibility() {
-      const med1 = medSelect.value;
-      if (med1) {
+      if (medSelect.value) {
         dose1Section.classList.remove('hidden');
         diazQuestion.classList.remove('hidden');
         dateSection.classList.remove('hidden');
         submitSection.classList.remove('hidden');
-        updateDose1Rows();
       } else {
         dose1Section.classList.add('hidden');
         diazQuestion.classList.add('hidden');
@@ -161,27 +157,6 @@
         submitSection.classList.add('hidden');
       }
       updateDiazepamSection();
-    }
-
-    function updateDose1Rows() {
-      const med1 = medSelect.value;
-      document.querySelectorAll('#dose1-section .tod-row').forEach(row => {
-        const tod = row.getAttribute('data-tod');
-        if (specialDrugs.includes(med1)) {
-          // only show Night for these
-          row.classList.toggle('hidden', tod !== 'Night');
-        } else {
-          row.classList.remove('hidden');
-        }
-      });
-      // adjust legend text
-      if (specialDrugs.includes(med1)) {
-        dose1Legend.textContent =
-          `Enter the milligram dose of ${med1} that is taken at nighttime each day.`;
-      } else {
-        dose1Legend.textContent =
-          `Enter the milligram dose of ${med1} that is taken at the specified times each day. Use “Midday” for TID dosing.`;
-      }
     }
 
     function updateDiazepamSection() {
