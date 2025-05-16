@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from datetime import datetime
 import taper_utils
 
-# Diazepam‐equivalent conversion factors
+# Diazepam‑equivalent conversion factors
 equiv_to_diazepam = {
     'alprazolam': 20.0,
     'lorazepam': 10.0,
@@ -23,9 +23,9 @@ def flatten_schedule_doses(times):
     for tod, value in times.items():
         if not value:
             continue
-        meds_list = value if isinstance(value[0], tuple) else [value]
-        for m, dose in meds_list:
-            result.setdefault(m, {})[tod] = result.setdefault(m, {}).get(tod, 0) + dose
+        meds = value if isinstance(value[0], tuple) else [value]
+        for med, dose in meds:
+            result.setdefault(med, {})[tod] = result.setdefault(med, {}).get(tod, 0) + dose
     return result
 
 def find_matching_step(med1, doses1, med2=None, doses2=None):
@@ -42,7 +42,7 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
                 break
             curr = nxt
 
-    # 2. Filter to steps containing med1
+    # 2. Filter steps to those containing med1
     filtered = []
     for step in order:
         _, times, _ = taper_utils.all_steps[step]
@@ -51,14 +51,14 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
             filtered.append(step)
     order = filtered
 
-    # 3. Compute user’s total equivalent
+    # 3. Compute user's total and fractions
     user_eq = total_diazepam_equiv(doses1, med1)
     user_med2_eq = 0.0
     if med2:
         user_med2_eq = total_diazepam_equiv(doses2, med2)
         user_eq += user_med2_eq
 
-    # Range‐filter by ±20/ +2 mg diazepam‐eq
+    # Range filter: up to +2mg, down to -20mg
     candidates = []
     for step in order:
         _, times, _ = taper_utils.all_steps[step]
@@ -71,7 +71,7 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
         if user_eq - 20 <= step_eq <= user_eq + 2:
             candidates.append((step, sched, step_eq))
 
-    # Fallback to full list if none matched
+    # If none in range, fallback
     if not candidates:
         candidates = [
             (
@@ -81,22 +81,20 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
                     calculate_equivalent_dose(m, d)
                     for m, tods in flatten_schedule_doses(taper_utils.all_steps[step][1]).items()
                     for d in tods.values()
-                ),
+                )
             )
             for step in order
         ]
 
-    # 4. Compute user’s med‐fractions and time‐of‐day eq (Morning, Midday, Night)
+    # 4. Score by fraction and time-of-day match
     user_frac1 = total_diazepam_equiv(doses1, med1) / user_eq if user_eq else 0
     user_frac2 = user_med2_eq / user_eq if user_eq else 0
-
     user_tod_eq = {
-        tod: calculate_equivalent_dose(med1, doses1.get(tod, 0))
-             + (calculate_equivalent_dose(med2, doses2.get(tod, 0)) if med2 else 0)
-        for tod in ("Morning", "Midday", "Night")
+        tod: calculate_equivalent_dose(med1, doses1.get(tod, 0)) +
+             (calculate_equivalent_dose(med2, doses2.get(tod, 0)) if med2 else 0)
+        for tod in ("Morning","Midday","Afternoon","Night")
     }
 
-    # 5. Score and pick best match
     best_score = -float('inf')
     best_step  = None
     WEIGHT_FRAC = 100.0
@@ -107,18 +105,17 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
             calculate_equivalent_dose(med1, d)
             for d in sched.get(med1, {}).values()
         )
-        step_med2_eq = (
-            sum(calculate_equivalent_dose(med2, d)
-                for d in sched.get(med2, {}).values())
-            if med2 else 0.0
-        )
+        step_med2_eq = sum(
+            calculate_equivalent_dose(med2, d)
+            for d in sched.get(med2, {}).values()
+        ) if med2 else 0.0
 
         frac1 = step_med1_eq / step_eq if step_eq else 0
         frac2 = step_med2_eq / step_eq if step_eq else 0
         frac_score = 1.0 - (abs(frac1 - user_frac1) + abs(frac2 - user_frac2))
 
         time_diff_sum = 0.0
-        for tod in ("Morning", "Midday", "Night"):
+        for tod in ("Morning","Midday","Afternoon","Night"):
             step_tod_eq = sum(
                 calculate_equivalent_dose(m, sched[m].get(tod, 0))
                 for m in sched
@@ -136,29 +133,29 @@ def find_matching_step(med1, doses1, med2=None, doses2=None):
         return nxt if nxt and nxt != "END" else best_step
     return None
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def index():
     meds     = sorted(taper_utils.medication_doses.keys())
     schedule = None
     error    = None
 
     if request.method == "POST":
-        med1            = request.form.get("med1")
-        start_date_str  = request.form.get("start_date")
+        med1           = request.form.get("med1")
+        start_date_str = request.form.get("start_date")
         if med1 and start_date_str:
-            # Only Morning, Midday, Night
             doses1 = {
                 tod: float(request.form.get(f"{tod}_1") or 0)
-                for tod in ("Morning", "Midday", "Night")
+                for tod in ("Morning","Midday","Afternoon","Night")
             }
             if request.form.get("diazepam") == "yes":
                 med2 = "diazepam"
                 doses2 = {
                     tod: float(request.form.get(f"{tod}_2") or 0)
-                    for tod in ("Morning", "Midday", "Night")
+                    for tod in ("Morning","Midday","Afternoon","Night")
                 }
             else:
-                med2, doses2 = None, None
+                med2   = None
+                doses2 = None
 
             try:
                 start_date = datetime.strptime(start_date_str, "%m/%d/%Y")
@@ -172,6 +169,14 @@ def index():
                     schedule = []
                     for s in taper_utils.get_schedule_steps(start_step, start_date):
                         schedule.extend(taper_utils.prescriptions_for_step(s))
+
+                    # map raw 'sX_Y' codes to human‑readable "Step 1, Step 2, …"
+                    step_map = {}
+                    for item in schedule:
+                        code = item['step']
+                        if code not in step_map:
+                            step_map[code] = len(step_map) + 1
+                        item['step'] = f"Step {step_map[code]}"
 
     return render_template("index.html",
                            meds=meds,
