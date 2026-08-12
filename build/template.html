@@ -71,21 +71,29 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
 .page table tbody,.page table thead{display:table;width:100%}
 #equiv-table{display:block;overflow-x:auto;max-width:100%}
 .page h2:first-child{margin-top:0}
-/* Watermarking is done by stamping one absolutely-positioned block per printed page
-   down the document, NOT by position:fixed. Fixed elements repeat per page only in
-   Chrome; Safari and Firefox paint them once, mid-document. */
-#wm-layer{display:none}
-@media print{
-  #wm-layer{display:block;position:absolute;top:0;left:0;right:0;height:0;
-    overflow:visible;pointer-events:none;user-select:none;-webkit-user-select:none;z-index:5}
-  .wm-sheet{position:absolute;left:0;right:0;height:var(--page-h);
-    display:flex;align-items:center;justify-content:center}
-  .wm-sheet span{transform:rotate(-45deg);font-size:64px;font-weight:800;letter-spacing:.06em;
-    color:#000;opacity:.13;text-align:center;line-height:1.15;white-space:pre-line}
-  .wm-sheet .stamp{position:absolute;left:0;right:0;bottom:0;transform:none;
-    font:9px/1.4 ui-monospace,Menlo,monospace;color:#444;text-align:center;opacity:1;
-    border-top:1px solid #bbb;padding-top:3px;white-space:normal;font-weight:400;letter-spacing:0}
-}
+
+/* ---------- print pagination ----------
+   No CSS mechanism puts content on every printed page in every browser:
+   `position:fixed` repeats per page only in Chrome, and Safari has never repeated
+   <thead>/<tfoot> across pages (WebKit bug 17205, open since 2008). Nor can CSS
+   report the printed page height, so anything positioned by arithmetic drifts.
+   So the document is paginated here instead: content is packed into fixed-height
+   .pg blocks that each force a page break, and each block carries its own footer.
+   Geometry is then ours, identical in every engine.
+
+   .pv carries the print typography and is applied both while measuring off-screen
+   and while printing, so what is measured is what is printed. */
+#printroot{display:none}
+#printroot.measuring{display:block;position:absolute;left:-20000px;top:0}
+.pv{width:7.1in}                    /* fits inside both Letter and A4 content boxes */
+.pv .page{border:none;border-radius:0;padding:0;margin:0;background:#fff;display:block}
+.pv .page table{display:table;overflow:visible;max-width:none;width:100%}
+.pv .page table tbody,.pv .page table thead{display:table-row-group}
+.pg{position:relative;height:var(--pg-h);overflow:visible;box-sizing:border-box}
+.pgbody{display:flow-root}          /* stops child margins collapsing out of the measure */
+.pgfoot{position:absolute;left:0;right:0;bottom:0;
+  font:9px/1.35 ui-monospace,Menlo,monospace;color:#444;text-align:center;
+  border-top:1px solid #bbb;padding-top:3px}
 .docfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:#333}
 .docfoot .stamp{font-family:ui-monospace,Menlo,monospace;margin-top:6px;color:#555}
 .hand{font-size:16px}
@@ -94,7 +102,7 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
 .hand .line{display:inline-block;border-bottom:1px solid var(--ink);min-width:230px}
 
 @media print{
-  @page{margin:14mm 14mm 22mm}
+  @page{margin:14mm}
   html,body{background:#fff}
   .wrap{max-width:none;padding:0}
   .noprint{display:none !important}
@@ -102,13 +110,16 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
   .page + .page{page-break-before:always}
   /* every finalized document prints, not just the tab on screen */
   .page.hidden{display:block !important}
-  /* Watermarks are real content elements, not backgrounds: browsers do not print
-     background-image or background-color by default, which would silently drop them. */
-  body{position:relative}
   tr,.keep{page-break-inside:avoid}
   .page table,#equiv-table{display:table;overflow:visible}   /* print unclipped */
   thead{display:table-header-group}
   a{text-decoration:none;color:inherit}
+  /* Only once pagination has actually produced pages does the paginated view take
+     over. If it never runs, the unpaginated documents still print — a printout
+     without a per-page footer, rather than a blank sheet. */
+  body.paginated #docs{display:none !important}
+  body.paginated #printroot{display:block;margin:0 auto}
+  body.paginated .pg + .pg{break-before:page;page-break-before:always}
 }
 @media (max-width:640px){
   .wrap{padding:14px 12px 60px}
@@ -293,8 +304,11 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
     </div>
   </div>
   <div id="docs"></div>
-<div id="wm-layer" aria-hidden="true"></div>
 </div>
+
+<!-- Paginated print view. A direct child of <body> so that measuring it never depends
+     on which screen happens to be visible. -->
+<div id="printroot" class="pv" aria-hidden="true"></div>
 
 <!-- ============ INFO SHEET ============ -->
 <div class="wrap noprint hidden" id="scr-info">

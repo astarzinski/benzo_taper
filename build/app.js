@@ -234,52 +234,183 @@ function makeCode(){
     weeks:S.weeks, weekDefaults:weekDefaults() }, ENG);
   }catch(e){ return 'UNAVAILABLE'; }
 }
-/* One watermark block per printed page, laid down the document at exact page-height
-   intervals. Letter minus the @page margins (14mm top, 22mm bottom) is 9.583in of
-   content per sheet; expressing the offsets in inches lets the browser do the
-   inch-to-pixel conversion, so this holds at any print scale. */
-const PAGE_CONTENT_IN = 9.583;
-function layoutWatermarks(){
-  const layer=$('wm-layer'); if(!layer) return;
-  layer.innerHTML='';
-  // Measure the printed height of the documents, in inches, using a probe so we do not
-  // assume 96 CSS pixels per inch.
+/* ---------- print pagination ----------
+   No CSS mechanism puts content on every printed page in every browser. Chrome
+   repeats position:fixed elements per page; Safari and Firefox paint them once.
+   Chrome and Firefox repeat <thead>/<tfoot> across pages; Safari never has
+   (WebKit bug 17205, open since 2008). And CSS cannot report the printed page
+   height, so anything positioned by arithmetic drifts a little further down every
+   page. Two earlier attempts failed for exactly these reasons.
+
+   So the pagination is done here. Content is packed into fixed-height .pg blocks,
+   each of which forces a page break and carries its own footer. The geometry is
+   then ours and is identical in every engine. Nothing is ever clipped: a block
+   that cannot be split is allowed to overflow rather than be dropped. */
+const PG_H_IN   = 9.0;    /* page block height. Letter gives 9.9in of content box at
+                             14mm margins and A4 gives 10.6in, less roughly 0.2in that
+                             Safari reserves for its own header and footer. 9.0in
+                             leaves better than half an inch of slack on either paper. */
+const PG_FOOT_IN = 0.42;  /* reserved at the foot of every block for the stamp */
+
+function pxPerInch(){
   const probe=document.createElement('div');
   probe.style.cssText='position:absolute;visibility:hidden;height:10in;pointer-events:none';
   document.body.appendChild(probe);
-  const pxPerIn=(probe.offsetHeight||960)/10;
+  const px=(probe.offsetHeight||960)/10;
   probe.remove();
-  const docs=$('docs');
-  const heightIn=docs?docs.scrollHeight/pxPerIn:0;
-  // Documents each start on a new sheet, so allow one extra per document, plus slack.
-  // Overshooting is free: the layer has zero height, so surplus blocks sit past the end
-  // of the content and generate no extra pages (verified). We therefore keep a generous
-  // floor, so coverage holds even in a browser that never fires beforeprint or that
-  // measures the print layout poorly.
-  const MIN_SHEETS=120;
-  const sheets=Math.max(MIN_SHEETS,
-    Math.ceil(heightIn/PAGE_CONTENT_IN) + (docs?docs.children.length:0) + 1);
-  for(let i=0;i<sheets;i++){
-    const s=el('div','wm-sheet');
-    s.style.top=(i*PAGE_CONTENT_IN)+'in';
-    s.style.setProperty('--page-h',PAGE_CONTENT_IN+'in');
-    s.appendChild(el('span',null,'NOT A PRESCRIPTION\nPRESCRIBER REVIEW REQUIRED'));
-    s.appendChild(el('div','stamp',S.stampText||''));
-    layer.appendChild(s);
-  }
+  return px;
 }
-window.addEventListener('beforeprint',layoutWatermarks);
 
-function watermark(code){
-  const d=el('div','wm');
-  const big=el('div','big');
-  big.appendChild(el('span',null,'NOT A PRESCRIPTION\nPRESCRIBER REVIEW REQUIRED'));
-  d.appendChild(big);
-  d.appendChild(el('div','stamp-line',
-    `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
-    `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`));
-  return d;
+/* A node may be broken across pages only if it is a block container holding nothing
+   but element children. Anything carrying its own text — a paragraph, a list item —
+   is atomic, because splitting it would mean re-implementing line breaking. */
+const SPLITTABLE={DIV:1,UL:1,OL:1,SECTION:1};
+function splittable(n){
+  if(n.tagName==='TABLE') return true;
+  if(!SPLITTABLE[n.tagName]||!n.children.length) return false;
+  for(const k of n.childNodes) if(k.nodeType===3 && k.nodeValue.trim()) return false;
+  return true;
 }
+function sanitise(n){ n.classList.remove('hidden'); n.removeAttribute('id'); return n; }
+
+function paginate(){
+  const root=$('printroot'), src=$('docs');
+  document.body.classList.remove('paginated');
+  if(!root||!src||!src.children.length) return 0;
+  root.innerHTML='';
+  root.classList.add('measuring');
+  const PX_IN=pxPerInch();
+  const LIMIT=PX_IN*(PG_H_IN-PG_FOOT_IN);
+  const HEAD_ROOM=PX_IN*1.1;   /* a heading needs this much page left under it, or it
+                                  is stranded at the foot of a page above its content */
+
+  let body=null, stack=[];
+  function openPage(){
+    const pg=el('div','pg');
+    pg.style.setProperty('--pg-h',PG_H_IN+'in');
+    body=el('div','pgbody'); pg.appendChild(body);
+    const f=el('div','pgfoot'); f.textContent=S.stampText||''; pg.appendChild(f);
+    root.appendChild(pg);
+    // Re-open the same chain of wrappers on the new page, so a document that breaks
+    // mid-table keeps its .page and .hand styling.
+    let parent=body;
+    stack=stack.map(fr=>{
+      const c=sanitise(fr.src.cloneNode(false));
+      parent.appendChild(c); parent=c;
+      return {src:fr.src,clone:c};
+    });
+  }
+  const tip  =()=> stack.length? stack[stack.length-1].clone : body;
+  const over =()=> body.getBoundingClientRect().height > LIMIT;
+  const empty=()=> body.getBoundingClientRect().height < 1;
+  const room =()=> LIMIT - body.getBoundingClientRect().height;
+
+  function place(node){
+    // A .keep group — a fill, its quantities table and its instructions — is only
+    // split as a last resort. Splitting one strands "Fill 7" at the foot of a page
+    // above the table it labels.
+    if(node.classList && node.classList.contains('keep') && !empty()){
+      const t1=sanitise(node.cloneNode(true));
+      tip().appendChild(t1);
+      if(!over()) return;
+      tip().removeChild(t1);
+      openPage();
+      const t2=sanitise(node.cloneNode(true));
+      tip().appendChild(t2);
+      if(!over()) return;
+      tip().removeChild(t2);      // taller than a page even alone: split it below
+    }
+    const host=tip();
+    const c=sanitise(node.cloneNode(true));
+    host.appendChild(c);
+    if(!over()) return;
+    host.removeChild(c);
+    if(node.tagName==='TABLE'){ placeTable(node); return; }
+    if(splittable(node)){
+      const shallow=sanitise(node.cloneNode(false));
+      tip().appendChild(shallow);
+      stack.push({src:node,clone:shallow});
+      const kids=Array.from(node.children);
+      for(let i=0;i<kids.length;i++){
+        // never leave a heading as the last thing on a page
+        if(/^H[1-6]$/.test(kids[i].tagName) && i+1<kids.length && !empty()){
+          const h=sanitise(kids[i].cloneNode(true));
+          tip().appendChild(h);
+          const stranded=room()<HEAD_ROOM;
+          tip().removeChild(h);
+          if(stranded) openPage();
+        }
+        const before=stack[stack.length-1].clone;
+        place(kids[i]);
+        // a numbered list that broke across a page carries on counting
+        if(node.tagName==='OL' && stack[stack.length-1].clone!==before)
+          stack[stack.length-1].clone.setAttribute('start',String(i+1));
+      }
+      stack.pop();
+      return;
+    }
+    if(empty()){ host.appendChild(c); return; }   // taller than a page: let it overflow
+    openPage();
+    tip().appendChild(c);
+  }
+
+  function placeTable(t){
+    const rows=Array.from(t.rows);
+    if(!rows.length) return;
+    // Freeze the column widths measured from the whole table. Without this, every
+    // fragment re-computes its own column widths, every row height changes with them,
+    // and the measurements this packing relies on stop meaning anything.
+    const meas=sanitise(t.cloneNode(true));
+    meas.style.width='100%';
+    tip().appendChild(meas);
+    const widths=Array.from(meas.rows[0].cells).map(c=>c.getBoundingClientRect().width);
+    tip().removeChild(meas);
+
+    const heads=[];
+    while(heads.length<rows.length &&
+          Array.from(rows[heads.length].cells).every(c=>c.tagName==='TH') &&
+          rows[heads.length].cells.length>1) heads.push(heads.length);
+
+    const total=widths.reduce((a,b)=>a+b,0)||1;
+    function newTable(){
+      const nt=sanitise(t.cloneNode(false));
+      nt.style.tableLayout='fixed'; nt.style.width='100%';
+      const cg=document.createElement('colgroup');
+      widths.forEach(w=>{ const co=document.createElement('col');
+        co.style.width=(w/total*100).toFixed(4)+'%'; cg.appendChild(co); });
+      nt.appendChild(cg);
+      heads.forEach(h=>nt.appendChild(rows[h].cloneNode(true)));
+      return nt;
+    }
+    let cur=newTable(); tip().appendChild(cur);
+    for(let k=heads.length;k<rows.length;k++){
+      cur.appendChild(rows[k].cloneNode(true));
+      if(!over()) continue;
+      cur.deleteRow(cur.rows.length-1);
+      if(cur.rows.length<=heads.length && empty()){
+        cur.appendChild(rows[k].cloneNode(true));   // one row taller than a page
+        continue;
+      }
+      if(cur.rows.length<=heads.length) cur.remove();  // never print a lone header
+      openPage();
+      cur=newTable(); tip().appendChild(cur);
+      cur.appendChild(rows[k].cloneNode(true));
+    }
+  }
+
+  stack=[]; openPage();
+  Array.from(src.children).forEach((doc,i)=>{
+    if(i>0){ stack=[]; openPage(); }               // each document starts a new sheet
+    place(doc);
+  });
+  if(root.children.length>1 && empty()) root.removeChild(root.lastChild);
+
+  root.classList.remove('measuring');
+  document.body.classList.add('paginated');
+  return root.children.length;
+}
+window.addEventListener('beforeprint',paginate);
+
 function footer(code){
   const f=el('div','docfoot');
   f.innerHTML =
@@ -308,7 +439,7 @@ function renderDocs(){
   S.stampText =
     `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
     `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`;
-  layoutWatermarks();
+  paginate();
   selectDoc(S._tab||'doc-hand');
 }
 function activeSteps(){ return S.result.steps.filter(s=>s.weeks>0&&Object.keys(s.regimen).length); }
