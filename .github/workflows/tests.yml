@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Engine invariants and fixture reproduction
+        run: node build/test_engine.js
+
+      - name: Schedule code round-trip and corruption resistance
+        run: node build/test_codec.js
+
+      - name: Rebuild and confirm index.html is up to date
+        run: |
+          python3 build/bundle.py
+          git diff --exit-code index.html \
+            || (echo "::error::index.html is stale — run build/bundle.py and commit"; exit 1)
+
+      - name: Browser regression
+        run: |
+          npm install playwright --no-fund --no-audit
+          npx playwright install --with-deps chromium
+          node build/test_ui_regression.js

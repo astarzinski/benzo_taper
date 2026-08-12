@@ -1,0 +1,5377 @@
+{
+ "steps": {
+  "s1_start": {
+   "sched": 1,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 120.0,
+   "printed_eq": 120.0,
+   "notes": [],
+   "next": "s1_1"
+  },
+  "s1_1": {
+   "sched": 1,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 120.0,
+   "printed_eq": 120.0,
+   "notes": [],
+   "next": "s1_2"
+  },
+  "s1_2": {
+   "sched": 1,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 120.0,
+   "printed_eq": 120.0,
+   "notes": [],
+   "next": "s1_3"
+  },
+  "s1_3": {
+   "sched": 1,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 120.0,
+   "printed_eq": 120.0,
+   "notes": [],
+   "next": "s1_4"
+  },
+  "s1_4": {
+   "sched": 1,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 120.0,
+   "printed_eq": 120.0,
+   "notes": [],
+   "next": "s1_5"
+  },
+  "s1_5": {
+   "sched": 1,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 110.0,
+   "printed_eq": 110.0,
+   "notes": [],
+   "next": "s1_6"
+  },
+  "s1_6": {
+   "sched": 1,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 100.0,
+   "printed_eq": 100.0,
+   "notes": [],
+   "next": "s1_7"
+  },
+  "s1_7": {
+   "sched": 1,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 90.0,
+   "printed_eq": 90.0,
+   "notes": [],
+   "next": "s1_8"
+  },
+  "s1_8": {
+   "sched": 1,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s1_9"
+  },
+  "s1_9": {
+   "sched": 1,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 70.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s1_10"
+  },
+  "s1_10": {
+   "sched": 1,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s1_11"
+  },
+  "s1_11": {
+   "sched": 1,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 50.0,
+   "printed_eq": 50.0,
+   "notes": [],
+   "next": "s1_12"
+  },
+  "s1_12": {
+   "sched": 1,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      25.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      25.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 50.0,
+   "printed_eq": 50.0,
+   "notes": [
+    "midday:Stop midday dose; divert 5mg each to morning and night doses"
+   ],
+   "next": "s1_13"
+  },
+  "s1_13": {
+   "sched": 1,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      25.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 45.0,
+   "printed_eq": 45.0,
+   "notes": [],
+   "next": "s1_14"
+  },
+  "s1_14": {
+   "sched": 1,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 40.0,
+   "printed_eq": 40.0,
+   "notes": [],
+   "next": "s2_start",
+   "chains_to": "s2_start"
+  },
+  "s2_start": {
+   "sched": 2,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 40.0,
+   "printed_eq": 40.0,
+   "notes": [],
+   "next": "s2_1"
+  },
+  "s2_1": {
+   "sched": 2,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      18.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 38.0,
+   "printed_eq": 38.0,
+   "notes": [],
+   "next": "s2_2"
+  },
+  "s2_2": {
+   "sched": 2,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      18.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      18.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 36.0,
+   "printed_eq": 36.0,
+   "notes": [],
+   "next": "s2_3"
+  },
+  "s2_3": {
+   "sched": 2,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      16.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      18.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 34.0,
+   "printed_eq": 34.0,
+   "notes": [],
+   "next": "s2_4"
+  },
+  "s2_4": {
+   "sched": 2,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      16.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      16.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 32.0,
+   "printed_eq": 32.0,
+   "notes": [],
+   "next": "s2_5"
+  },
+  "s2_5": {
+   "sched": 2,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      16.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s2_6"
+  },
+  "s2_6": {
+   "sched": 2,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 28.0,
+   "printed_eq": 28.0,
+   "notes": [],
+   "next": "s2_7"
+  },
+  "s2_7": {
+   "sched": 2,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 26.0,
+   "printed_eq": 26.0,
+   "notes": [],
+   "next": "s2_8"
+  },
+  "s2_8": {
+   "sched": 2,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 24.0,
+   "printed_eq": 24.0,
+   "notes": [],
+   "next": "s2_9"
+  },
+  "s2_9": {
+   "sched": 2,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.0,
+   "printed_eq": 22.0,
+   "notes": [],
+   "next": "s2_10"
+  },
+  "s2_10": {
+   "sched": 2,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [],
+   "next": "s2_11"
+  },
+  "s2_11": {
+   "sched": 2,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 18.0,
+   "printed_eq": 18.0,
+   "notes": [],
+   "next": "s2_12"
+  },
+  "s2_12": {
+   "sched": 2,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 16.0,
+   "printed_eq": 16.0,
+   "notes": [],
+   "next": "s2_13"
+  },
+  "s2_13": {
+   "sched": 2,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 14.0,
+   "printed_eq": 14.0,
+   "notes": [],
+   "next": "s2_14"
+  },
+  "s2_14": {
+   "sched": 2,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 13.0,
+   "printed_eq": 13.0,
+   "notes": [],
+   "next": "s2_15"
+  },
+  "s2_15": {
+   "sched": 2,
+   "stage": 15,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 12.0,
+   "printed_eq": 12.0,
+   "notes": [],
+   "next": "s2_16"
+  },
+  "s2_16": {
+   "sched": 2,
+   "stage": 16,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 11.0,
+   "printed_eq": 11.0,
+   "notes": [],
+   "next": "s2_17"
+  },
+  "s2_17": {
+   "sched": 2,
+   "stage": 17,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 10.0,
+   "printed_eq": 10.0,
+   "notes": [],
+   "next": "s2_18"
+  },
+  "s2_18": {
+   "sched": 2,
+   "stage": 18,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 9.0,
+   "printed_eq": 9.0,
+   "notes": [],
+   "next": "s2_19"
+  },
+  "s2_19": {
+   "sched": 2,
+   "stage": 19,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 8.0,
+   "printed_eq": 8.0,
+   "notes": [],
+   "next": "s2_20"
+  },
+  "s2_20": {
+   "sched": 2,
+   "stage": 20,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      7.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 7.0,
+   "printed_eq": 7.0,
+   "notes": [],
+   "next": "s2_21"
+  },
+  "s2_21": {
+   "sched": 2,
+   "stage": 21,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 6.0,
+   "printed_eq": 6.0,
+   "notes": [],
+   "next": "s2_22"
+  },
+  "s2_22": {
+   "sched": 2,
+   "stage": 22,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 5.0,
+   "printed_eq": 5.0,
+   "notes": [],
+   "next": "s2_23"
+  },
+  "s2_23": {
+   "sched": 2,
+   "stage": 23,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 4.0,
+   "printed_eq": 4.0,
+   "notes": [],
+   "next": "s2_24"
+  },
+  "s2_24": {
+   "sched": 2,
+   "stage": 24,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 3.0,
+   "printed_eq": 3.0,
+   "notes": [],
+   "next": "s2_25"
+  },
+  "s2_25": {
+   "sched": 2,
+   "stage": 25,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 2.0,
+   "printed_eq": 2.0,
+   "notes": [],
+   "next": "s2_26"
+  },
+  "s2_26": {
+   "sched": 2,
+   "stage": 26,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 1.0,
+   "printed_eq": 1.0,
+   "notes": [],
+   "next": null
+  },
+  "s3_start": {
+   "sched": 3,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_1"
+  },
+  "s3_1": {
+   "sched": 3,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_2"
+  },
+  "s3_2": {
+   "sched": 3,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_3"
+  },
+  "s3_3": {
+   "sched": 3,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_4"
+  },
+  "s3_4": {
+   "sched": 3,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_5"
+  },
+  "s3_5": {
+   "sched": 3,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s3_6"
+  },
+  "s3_6": {
+   "sched": 3,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 55.0,
+   "printed_eq": 55.0,
+   "notes": [],
+   "next": "s3_7"
+  },
+  "s3_7": {
+   "sched": 3,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 50.0,
+   "printed_eq": 50.0,
+   "notes": [],
+   "next": "s3_8"
+  },
+  "s3_8": {
+   "sched": 3,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.0
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 45.0,
+   "printed_eq": 45.0,
+   "notes": [],
+   "next": "s3_9"
+  },
+  "s3_9": {
+   "sched": 3,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 40.0,
+   "printed_eq": 40.0,
+   "notes": [],
+   "next": "s3_10"
+  },
+  "s3_10": {
+   "sched": 3,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 35.0,
+   "printed_eq": 35.0,
+   "notes": [],
+   "next": "s3_11"
+  },
+  "s3_11": {
+   "sched": 3,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s3_12"
+  },
+  "s3_12": {
+   "sched": 3,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      18.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 28.0,
+   "printed_eq": 28.0,
+   "notes": [],
+   "next": "s3_13"
+  },
+  "s3_13": {
+   "sched": 3,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      16.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 26.0,
+   "printed_eq": 26.0,
+   "notes": [],
+   "next": "s3_14"
+  },
+  "s3_14": {
+   "sched": 3,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 24.0,
+   "printed_eq": 24.0,
+   "notes": [],
+   "next": "s3_15"
+  },
+  "s3_15": {
+   "sched": 3,
+   "stage": 15,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.0,
+   "printed_eq": 22.0,
+   "notes": [],
+   "next": "s3_16"
+  },
+  "s3_16": {
+   "sched": 3,
+   "stage": 16,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [],
+   "next": "s3_17"
+  },
+  "s3_17": {
+   "sched": 3,
+   "stage": 17,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 19.0,
+   "printed_eq": 19.0,
+   "notes": [],
+   "next": "s3_18"
+  },
+  "s3_18": {
+   "sched": 3,
+   "stage": 18,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 18.0,
+   "printed_eq": 18.0,
+   "notes": [],
+   "next": "s3_19"
+  },
+  "s3_19": {
+   "sched": 3,
+   "stage": 19,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 17.0,
+   "printed_eq": 17.0,
+   "notes": [],
+   "next": "s3_20"
+  },
+  "s3_20": {
+   "sched": 3,
+   "stage": 20,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 16.0,
+   "printed_eq": 16.0,
+   "notes": [],
+   "next": "s3_21"
+  },
+  "s3_21": {
+   "sched": 3,
+   "stage": 21,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 15.0,
+   "printed_eq": 15.0,
+   "notes": [],
+   "next": "s3_22"
+  },
+  "s3_22": {
+   "sched": 3,
+   "stage": 22,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 14.0,
+   "printed_eq": 14.0,
+   "notes": [],
+   "next": "s3_23"
+  },
+  "s3_23": {
+   "sched": 3,
+   "stage": 23,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 13.0,
+   "printed_eq": 13.0,
+   "notes": [],
+   "next": "s3_24"
+  },
+  "s3_24": {
+   "sched": 3,
+   "stage": 24,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 12.0,
+   "printed_eq": 12.0,
+   "notes": [],
+   "next": "s3_25"
+  },
+  "s3_25": {
+   "sched": 3,
+   "stage": 25,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 11.0,
+   "printed_eq": 11.0,
+   "notes": [
+    "midday:Stop diazepam"
+   ],
+   "next": "s3_26"
+  },
+  "s3_26": {
+   "sched": 3,
+   "stage": 26,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 10.0,
+   "printed_eq": 10.0,
+   "notes": [
+    "morning:Stop diazepam"
+   ],
+   "next": "s3_27"
+  },
+  "s3_27": {
+   "sched": 3,
+   "stage": 27,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      9.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 9.0,
+   "printed_eq": 9.0,
+   "notes": [],
+   "next": "s3_28"
+  },
+  "s3_28": {
+   "sched": 3,
+   "stage": 28,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 8.0,
+   "printed_eq": 8.0,
+   "notes": [],
+   "next": "s3_29"
+  },
+  "s3_29": {
+   "sched": 3,
+   "stage": 29,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      7.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 7.0,
+   "printed_eq": 7.0,
+   "notes": [],
+   "next": "s3_30"
+  },
+  "s3_30": {
+   "sched": 3,
+   "stage": 30,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 6.0,
+   "printed_eq": 6.0,
+   "notes": [],
+   "next": "s3_31"
+  },
+  "s3_31": {
+   "sched": 3,
+   "stage": 31,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 5.0,
+   "printed_eq": 5.0,
+   "notes": [],
+   "next": "s3_32"
+  },
+  "s3_32": {
+   "sched": 3,
+   "stage": 32,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 4.0,
+   "printed_eq": 4.0,
+   "notes": [],
+   "next": "s3_33"
+  },
+  "s3_33": {
+   "sched": 3,
+   "stage": 33,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 3.0,
+   "printed_eq": 3.0,
+   "notes": [],
+   "next": "s3_34"
+  },
+  "s3_34": {
+   "sched": 3,
+   "stage": 34,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 2.0,
+   "printed_eq": 2.0,
+   "notes": [],
+   "next": "s3_35"
+  },
+  "s3_35": {
+   "sched": 3,
+   "stage": 35,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 1.0,
+   "printed_eq": 1.0,
+   "notes": [],
+   "next": null
+  },
+  "s5_start": {
+   "sched": 5,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_1"
+  },
+  "s5_1": {
+   "sched": 5,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_2"
+  },
+  "s5_2": {
+   "sched": 5,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_3"
+  },
+  "s5_3": {
+   "sched": 5,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_4"
+  },
+  "s5_4": {
+   "sched": 5,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_5"
+  },
+  "s5_5": {
+   "sched": 5,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s5_6"
+  },
+  "s5_6": {
+   "sched": 5,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 28.0,
+   "printed_eq": 28.0,
+   "notes": [],
+   "next": "s5_7"
+  },
+  "s5_7": {
+   "sched": 5,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 26.0,
+   "printed_eq": 26.0,
+   "notes": [],
+   "next": "s5_8"
+  },
+  "s5_8": {
+   "sched": 5,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 24.0,
+   "printed_eq": 24.0,
+   "notes": [],
+   "next": "s5_9"
+  },
+  "s5_9": {
+   "sched": 5,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.0,
+   "printed_eq": 22.0,
+   "notes": [],
+   "next": "s5_10"
+  },
+  "s5_10": {
+   "sched": 5,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [
+    "midday:Stop diazepam"
+   ],
+   "next": "s5_11"
+  },
+  "s5_11": {
+   "sched": 5,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 18.0,
+   "printed_eq": 18.0,
+   "notes": [],
+   "next": "s5_12"
+  },
+  "s5_12": {
+   "sched": 5,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 16.0,
+   "printed_eq": 16.0,
+   "notes": [],
+   "next": "s5_13"
+  },
+  "s5_13": {
+   "sched": 5,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 14.0,
+   "printed_eq": 14.0,
+   "notes": [],
+   "next": "s5_14"
+  },
+  "s5_14": {
+   "sched": 5,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 12.0,
+   "printed_eq": 12.0,
+   "notes": [],
+   "next": "s5_15"
+  },
+  "s5_15": {
+   "sched": 5,
+   "stage": 15,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 10.0,
+   "printed_eq": 10.0,
+   "notes": [
+    "morning:Stop diazepam"
+   ],
+   "next": "s3_26",
+   "chains_to": "s3_26"
+  },
+  "s6_start": {
+   "sched": 6,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s6_1"
+  },
+  "s6_1": {
+   "sched": 6,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s6_2"
+  },
+  "s6_2": {
+   "sched": 6,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s6_3"
+  },
+  "s6_3": {
+   "sched": 6,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 55.0,
+   "printed_eq": 55.0,
+   "notes": [],
+   "next": "s6_4"
+  },
+  "s6_4": {
+   "sched": 6,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 50.0,
+   "printed_eq": 50.0,
+   "notes": [],
+   "next": "s6_5"
+  },
+  "s6_5": {
+   "sched": 6,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 45.0,
+   "printed_eq": 45.0,
+   "notes": [],
+   "next": "s6_6"
+  },
+  "s6_6": {
+   "sched": 6,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 40.0,
+   "printed_eq": 40.0,
+   "notes": [],
+   "next": "s6_7"
+  },
+  "s6_7": {
+   "sched": 6,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "clonazepam",
+      0.25
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 35.0,
+   "printed_eq": 35.0,
+   "notes": [],
+   "next": "s6_8"
+  },
+  "s6_8": {
+   "sched": 6,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s6_9"
+  },
+  "s6_9": {
+   "sched": 6,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.5
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 27.5,
+   "printed_eq": 27.5,
+   "notes": [],
+   "next": "s6_10"
+  },
+  "s6_10": {
+   "sched": 6,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 27.0,
+   "printed_eq": 27.0,
+   "notes": [
+    "midday:Stop diazepam"
+   ],
+   "next": "s6_11"
+  },
+  "s6_11": {
+   "sched": 6,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 25.0,
+   "printed_eq": 25.0,
+   "notes": [],
+   "next": "s6_12"
+  },
+  "s6_12": {
+   "sched": 6,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      14.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 24.0,
+   "printed_eq": 24.0,
+   "notes": [],
+   "next": "s6_13"
+  },
+  "s6_13": {
+   "sched": 6,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      12.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.0,
+   "printed_eq": 22.0,
+   "notes": [],
+   "next": "s6_14"
+  },
+  "s6_14": {
+   "sched": 6,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [],
+   "next": "s5_10",
+   "chains_to": "s5_10"
+  },
+  "s7_start": {
+   "sched": 7,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_1"
+  },
+  "s7_1": {
+   "sched": 7,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_2"
+  },
+  "s7_2": {
+   "sched": 7,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_3"
+  },
+  "s7_3": {
+   "sched": 7,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_4"
+  },
+  "s7_4": {
+   "sched": 7,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_5"
+  },
+  "s7_5": {
+   "sched": 7,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 80.0,
+   "printed_eq": 80.0,
+   "notes": [],
+   "next": "s7_6"
+  },
+  "s7_6": {
+   "sched": 7,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 75.0,
+   "printed_eq": 75.0,
+   "notes": [],
+   "next": "s7_7"
+  },
+  "s7_7": {
+   "sched": 7,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.5
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 70.0,
+   "printed_eq": 70.0,
+   "notes": [],
+   "next": "s7_8"
+  },
+  "s7_8": {
+   "sched": 7,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 65.0,
+   "printed_eq": 65.0,
+   "notes": [],
+   "next": "s7_9"
+  },
+  "s7_9": {
+   "sched": 7,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 60.0,
+   "printed_eq": 60.0,
+   "notes": [],
+   "next": "s7_10"
+  },
+  "s7_10": {
+   "sched": 7,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "alprazolam",
+      0.25
+     ],
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 55.0,
+   "printed_eq": 55.0,
+   "notes": [],
+   "next": "s7_11"
+  },
+  "s7_11": {
+   "sched": 7,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 50.0,
+   "printed_eq": 50.0,
+   "notes": [],
+   "next": "s7_12"
+  },
+  "s7_12": {
+   "sched": 7,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 45.0,
+   "printed_eq": 45.0,
+   "notes": [],
+   "next": "s7_13"
+  },
+  "s7_13": {
+   "sched": 7,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 40.0,
+   "printed_eq": 40.0,
+   "notes": [],
+   "next": "s7_14"
+  },
+  "s7_14": {
+   "sched": 7,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      20.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 35.0,
+   "printed_eq": 35.0,
+   "notes": [],
+   "next": "s7_15"
+  },
+  "s7_15": {
+   "sched": 7,
+   "stage": 15,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      15.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s7_16"
+  },
+  "s7_16": {
+   "sched": 7,
+   "stage": 16,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      12.5
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 27.5,
+   "printed_eq": 27.5,
+   "notes": [],
+   "next": "s7_17"
+  },
+  "s7_17": {
+   "sched": 7,
+   "stage": 17,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 25.0,
+   "printed_eq": 25.0,
+   "notes": [],
+   "next": "s7_18"
+  },
+  "s7_18": {
+   "sched": 7,
+   "stage": 18,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.5
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.5,
+   "printed_eq": 22.5,
+   "notes": [],
+   "next": "s7_19"
+  },
+  "s7_19": {
+   "sched": 7,
+   "stage": 19,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [
+    "midday:Stop diazepam"
+   ],
+   "next": "s7_20"
+  },
+  "s7_20": {
+   "sched": 7,
+   "stage": 20,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 19.0,
+   "printed_eq": 19.0,
+   "notes": [],
+   "next": "s7_21"
+  },
+  "s7_21": {
+   "sched": 7,
+   "stage": 21,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 18.0,
+   "printed_eq": 18.0,
+   "notes": [],
+   "next": "s7_22"
+  },
+  "s7_22": {
+   "sched": 7,
+   "stage": 22,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 17.0,
+   "printed_eq": 17.0,
+   "notes": [],
+   "next": "s7_23"
+  },
+  "s7_23": {
+   "sched": 7,
+   "stage": 23,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 16.0,
+   "printed_eq": 16.0,
+   "notes": [],
+   "next": "s7_24"
+  },
+  "s7_24": {
+   "sched": 7,
+   "stage": 24,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 15.0,
+   "printed_eq": 15.0,
+   "notes": [],
+   "next": "s7_25"
+  },
+  "s7_25": {
+   "sched": 7,
+   "stage": 25,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "afternoon": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 14.0,
+   "printed_eq": 14.0,
+   "notes": [],
+   "next": "s7_26"
+  },
+  "s7_26": {
+   "sched": 7,
+   "stage": 26,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 12.0,
+   "printed_eq": 12.0,
+   "notes": [
+    "afternoon:Stop diazepam"
+   ],
+   "next": "s7_27"
+  },
+  "s7_27": {
+   "sched": 7,
+   "stage": 27,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 10.0,
+   "printed_eq": 10.0,
+   "notes": [
+    "morning:Stop diazepam"
+   ],
+   "next": "s3_26",
+   "chains_to": "s3_26"
+  },
+  "s8_start": {
+   "sched": 8,
+   "stage": "start",
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_1"
+  },
+  "s8_1": {
+   "sched": 8,
+   "stage": 1,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_2"
+  },
+  "s8_2": {
+   "sched": 8,
+   "stage": 2,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_3"
+  },
+  "s8_3": {
+   "sched": 8,
+   "stage": 3,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_4"
+  },
+  "s8_4": {
+   "sched": 8,
+   "stage": 4,
+   "slots": {
+    "morning": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_5"
+  },
+  "s8_5": {
+   "sched": 8,
+   "stage": 5,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "lorazepam",
+      0.5
+     ],
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_6"
+  },
+  "s8_6": {
+   "sched": 8,
+   "stage": 6,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 1,
+   "weeks_range": [
+    1,
+    1
+   ],
+   "eq": 30.0,
+   "printed_eq": 30.0,
+   "notes": [],
+   "next": "s8_7"
+  },
+  "s8_7": {
+   "sched": 8,
+   "stage": 7,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 28.0,
+   "printed_eq": 28.0,
+   "notes": [],
+   "next": "s8_8"
+  },
+  "s8_8": {
+   "sched": 8,
+   "stage": 8,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 26.0,
+   "printed_eq": 26.0,
+   "notes": [],
+   "next": "s8_9"
+  },
+  "s8_9": {
+   "sched": 8,
+   "stage": 9,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      8.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 24.0,
+   "printed_eq": 24.0,
+   "notes": [],
+   "next": "s8_10"
+  },
+  "s8_10": {
+   "sched": 8,
+   "stage": 10,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 22.0,
+   "printed_eq": 22.0,
+   "notes": [],
+   "next": "s8_11"
+  },
+  "s8_11": {
+   "sched": 8,
+   "stage": 11,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 20.0,
+   "printed_eq": 20.0,
+   "notes": [],
+   "next": "s8_12"
+  },
+  "s8_12": {
+   "sched": 8,
+   "stage": 12,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "midday": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 18.0,
+   "printed_eq": 18.0,
+   "notes": [],
+   "next": "s8_13"
+  },
+  "s8_13": {
+   "sched": 8,
+   "stage": 13,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      6.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 16.0,
+   "printed_eq": 16.0,
+   "notes": [
+    "midday:Stop diazepam"
+   ],
+   "next": "s8_14"
+  },
+  "s8_14": {
+   "sched": 8,
+   "stage": 14,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      5.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 15.0,
+   "printed_eq": 15.0,
+   "notes": [],
+   "next": "s8_15"
+  },
+  "s8_15": {
+   "sched": 8,
+   "stage": 15,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      4.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 14.0,
+   "printed_eq": 14.0,
+   "notes": [],
+   "next": "s8_16"
+  },
+  "s8_16": {
+   "sched": 8,
+   "stage": 16,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      3.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 13.0,
+   "printed_eq": 13.0,
+   "notes": [],
+   "next": "s8_17"
+  },
+  "s8_17": {
+   "sched": 8,
+   "stage": 17,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      2.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 12.0,
+   "printed_eq": 12.0,
+   "notes": [],
+   "next": "s8_18"
+  },
+  "s8_18": {
+   "sched": 8,
+   "stage": 18,
+   "slots": {
+    "morning": [
+     [
+      "diazepam",
+      1.0
+     ]
+    ],
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 11.0,
+   "printed_eq": 11.0,
+   "notes": [],
+   "next": "s8_19"
+  },
+  "s8_19": {
+   "sched": 8,
+   "stage": 19,
+   "slots": {
+    "night": [
+     [
+      "diazepam",
+      10.0
+     ]
+    ]
+   },
+   "weeks_default": 2,
+   "weeks_range": [
+    1,
+    2
+   ],
+   "eq": 10.0,
+   "printed_eq": 10.0,
+   "notes": [
+    "morning:Stop diazepam"
+   ],
+   "next": "s3_26",
+   "chains_to": "s3_26"
+  }
+ },
+ "order": {
+  "1": [
+   "s1_start",
+   "s1_1",
+   "s1_2",
+   "s1_3",
+   "s1_4",
+   "s1_5",
+   "s1_6",
+   "s1_7",
+   "s1_8",
+   "s1_9",
+   "s1_10",
+   "s1_11",
+   "s1_12",
+   "s1_13",
+   "s1_14"
+  ],
+  "2": [
+   "s2_start",
+   "s2_1",
+   "s2_2",
+   "s2_3",
+   "s2_4",
+   "s2_5",
+   "s2_6",
+   "s2_7",
+   "s2_8",
+   "s2_9",
+   "s2_10",
+   "s2_11",
+   "s2_12",
+   "s2_13",
+   "s2_14",
+   "s2_15",
+   "s2_16",
+   "s2_17",
+   "s2_18",
+   "s2_19",
+   "s2_20",
+   "s2_21",
+   "s2_22",
+   "s2_23",
+   "s2_24",
+   "s2_25",
+   "s2_26"
+  ],
+  "3": [
+   "s3_start",
+   "s3_1",
+   "s3_2",
+   "s3_3",
+   "s3_4",
+   "s3_5",
+   "s3_6",
+   "s3_7",
+   "s3_8",
+   "s3_9",
+   "s3_10",
+   "s3_11",
+   "s3_12",
+   "s3_13",
+   "s3_14",
+   "s3_15",
+   "s3_16",
+   "s3_17",
+   "s3_18",
+   "s3_19",
+   "s3_20",
+   "s3_21",
+   "s3_22",
+   "s3_23",
+   "s3_24",
+   "s3_25",
+   "s3_26",
+   "s3_27",
+   "s3_28",
+   "s3_29",
+   "s3_30",
+   "s3_31",
+   "s3_32",
+   "s3_33",
+   "s3_34",
+   "s3_35"
+  ],
+  "5": [
+   "s5_start",
+   "s5_1",
+   "s5_2",
+   "s5_3",
+   "s5_4",
+   "s5_5",
+   "s5_6",
+   "s5_7",
+   "s5_8",
+   "s5_9",
+   "s5_10",
+   "s5_11",
+   "s5_12",
+   "s5_13",
+   "s5_14",
+   "s5_15"
+  ],
+  "6": [
+   "s6_start",
+   "s6_1",
+   "s6_2",
+   "s6_3",
+   "s6_4",
+   "s6_5",
+   "s6_6",
+   "s6_7",
+   "s6_8",
+   "s6_9",
+   "s6_10",
+   "s6_11",
+   "s6_12",
+   "s6_13",
+   "s6_14"
+  ],
+  "7": [
+   "s7_start",
+   "s7_1",
+   "s7_2",
+   "s7_3",
+   "s7_4",
+   "s7_5",
+   "s7_6",
+   "s7_7",
+   "s7_8",
+   "s7_9",
+   "s7_10",
+   "s7_11",
+   "s7_12",
+   "s7_13",
+   "s7_14",
+   "s7_15",
+   "s7_16",
+   "s7_17",
+   "s7_18",
+   "s7_19",
+   "s7_20",
+   "s7_21",
+   "s7_22",
+   "s7_23",
+   "s7_24",
+   "s7_25",
+   "s7_26",
+   "s7_27"
+  ],
+  "8": [
+   "s8_start",
+   "s8_1",
+   "s8_2",
+   "s8_3",
+   "s8_4",
+   "s8_5",
+   "s8_6",
+   "s8_7",
+   "s8_8",
+   "s8_9",
+   "s8_10",
+   "s8_11",
+   "s8_12",
+   "s8_13",
+   "s8_14",
+   "s8_15",
+   "s8_16",
+   "s8_17",
+   "s8_18",
+   "s8_19"
+  ]
+ },
+ "eq": {
+  "alprazolam": 20.0,
+  "lorazepam": 10.0,
+  "clonazepam": 20.0,
+  "diazepam": 1.0
+ }
+}

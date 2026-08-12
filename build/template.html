@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benzodiazepine Taper Schedule Generator</title>
+<style>
+:root{
+  --ink:#14181d; --muted:#5b6672; --line:#d6dbe1; --bg:#f4f6f8; --panel:#fff;
+  --accent:#1c5d8c; --accent-soft:#e8f0f6;
+  --ashton:#1f6b45; --ashton-bg:#e8f4ed;
+  --extrap:#8a5a12; --extrap-bg:#fdf1dc;
+  --danger:#9c2b2b; --danger-bg:#fbeaea;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:19px;margin:32px 0 10px;letter-spacing:-.01em}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:0 0 12px}
+small,.small{font-size:13px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--line);background:#fff;padding:9px 14px}
+button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.primary:hover:not(:disabled){background:#164b70}
+.danger-btn{color:var(--danger);border-color:#e3bcbc}
+input[type=text],select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink)}
+input[type=text]:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hidden{display:none !important}
+label{font-weight:600;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.tag-ashton{background:var(--ashton-bg);color:var(--ashton)}
+.tag-extrap{background:var(--extrap-bg);color:var(--extrap)}
+.tag-current{background:#e9edf1;color:var(--muted)}
+.err{background:var(--danger-bg);border:1px solid #e3bcbc;color:var(--danger);padding:12px 14px;border-radius:8px;margin:12px 0}
+.note{background:var(--accent-soft);border:1px solid #c5d9e8;padding:12px 14px;border-radius:8px;margin:12px 0;font-size:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff;text-align:left}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt b{display:block;font-size:15px}
+.opt span{font-size:12px;color:var(--muted)}
+.wk{width:56px;text-align:center}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:10px 0}
+.gate{max-width:720px;margin:40px auto}
+.gate ul{margin:0 0 14px 18px;padding:0}
+.gate li{margin-bottom:7px}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:0;flex-wrap:wrap}
+.tab{border:none;background:none;padding:11px 15px;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:0;font-weight:600;color:var(--muted)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:19px;letter-spacing:.06em;
+  background:#101418;color:#e8eef4;padding:14px 16px;border-radius:8px;word-break:break-all;line-height:1.5}
+.phi{display:inline-block;background:var(--danger-bg);color:var(--danger);border:1px solid #e3bcbc;
+  font-size:11px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:4px}
+
+/* ---------- printed documents ---------- */
+.page{position:relative;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:34px 38px;margin-bottom:18px}
+/* Wide tables scroll inside the page rather than being clipped by it. Previously
+   .page{overflow:hidden} silently hid the Night dose column on a phone. */
+.page table{display:block;overflow-x:auto;max-width:100%}
+.page table tbody,.page table thead{display:table;width:100%}
+#equiv-table{display:block;overflow-x:auto;max-width:100%}
+.page h2:first-child{margin-top:0}
+.wm{position:fixed;inset:0;pointer-events:none;user-select:none;-webkit-user-select:none;z-index:5}
+#global-wm{display:none}
+.wm .big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.wm .big span{transform:rotate(-45deg);font-size:52px;font-weight:800;letter-spacing:.06em;
+  color:#000;opacity:.10;text-align:center;line-height:1.15;white-space:pre-line}
+.wm .stamp-line{display:none}
+.docfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:#333}
+.docfoot .stamp{font-family:ui-monospace,Menlo,monospace;margin-top:6px;color:#555}
+.hand{font-size:16px}
+.hand h3{margin-top:20px}
+.hand .clinic{border:2px solid var(--ink);padding:14px 16px;border-radius:8px;margin-bottom:18px;font-size:15px}
+.hand .line{display:inline-block;border-bottom:1px solid var(--ink);min-width:230px}
+
+@media print{
+  @page{margin:14mm 14mm 22mm}
+  html,body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .noprint{display:none !important}
+  .page{border:none;border-radius:0;padding:0;margin:0;overflow:visible}
+  .page + .page{page-break-before:always}
+  /* every finalized document prints, not just the tab on screen */
+  .page.hidden{display:block !important}
+  /* Watermark is a fixed CONTENT element, not a background: browsers do not print
+     background-image/background-color by default, which would silently drop it.
+     Fixed positioning makes it repeat on every printed page. */
+  /* The watermark container is fixed, so it — and everything inside it — repeats on
+     every printed sheet. The per-page identification strip rides along inside it. */
+  .wm{position:fixed;inset:0}
+  .wm .big span{font-size:64px;opacity:.13}
+  #global-wm{display:block}
+  .wm .stamp-line{display:block;position:absolute;left:0;right:0;bottom:0;
+    font:9px/1.4 ui-monospace,Menlo,monospace;color:#444;text-align:center;
+    border-top:1px solid #bbb;padding-top:3px}
+  tr,.keep{page-break-inside:avoid}
+  .page table,#equiv-table{display:table;overflow:visible}   /* print unclipped */
+  thead{display:table-header-group}
+  a{text-decoration:none;color:inherit}
+}
+@media (max-width:640px){
+  .wrap{padding:14px 12px 60px}
+  .page{padding:20px 16px}
+  table{font-size:13px}
+  th,td{padding:5px 6px}
+  .dosegrid{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ GATE ============ -->
+<div class="wrap noprint" id="scr-gate">
+  <div class="gate panel">
+    <h1>Benzodiazepine Taper Schedule Generator</h1>
+    <p class="sub">Derived from the Ashton Manual (Professor C&nbsp;Heather Ashton, revised 2002)</p>
+
+    <div class="err" style="background:var(--danger-bg)">
+      <strong>Read before continuing.</strong>
+      <ul style="margin:10px 0 0 18px">
+        <li>This tool is provided for <strong>research and informational purposes only</strong>. Its
+            outputs are <strong>not intended to be used for clinical care</strong>.</li>
+        <li>Any schedule generated here <strong>must be reviewed carefully by a qualified
+            prescriber</strong> before it is acted upon. Verify every dose independently.</li>
+        <li>Output is computer-generated and has <strong>not been reviewed by a clinician</strong>.
+            Steps labelled <em>Generated</em> are produced by this software and appear in no
+            published schedule. Steps labelled <em>Published</em> cite a dose sequence from Ashton
+            (2002) — a citation of source, <strong>not an endorsement</strong>. Professor Ashton, her
+            estate and the Benzodiazepine Information Coalition have not produced, reviewed or
+            endorsed this tool or anything it generates.</li>
+        <li>This is not medical advice, not a prescription, and not a substitute for professional
+            judgement. No warranty of any kind is provided, and the author accepts no liability
+            arising from any use of this tool or its output.</li>
+        <li>Schedule codes encode patient dosing and dates. <strong>Treat them as protected health
+            information.</strong></li>
+      </ul>
+    </div>
+
+    <div class="note">
+      For your convenience, a link to the CURES database is provided here:
+      <a href="https://cures.doj.ca.gov/" target="_blank" rel="noopener noreferrer"><strong>CURES
+      2.0 &mdash; California Controlled Substance Utilization Review and Evaluation System</strong></a>
+    </div>
+
+    <div class="row" style="margin-top:18px">
+      <button class="primary" id="btn-agree">I have read and agree</button>
+      <button id="btn-info-gate">What is this?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SETUP ============ -->
+<div class="wrap noprint hidden" id="scr-setup">
+  <h1>Benzodiazepine Taper Schedule Generator</h1>
+  <p class="sub">Enter the patient's <strong>current</strong> regimen. A schedule can be regenerated
+     from any dose at any time — if a patient stalls, come back and enter where they are now.</p>
+
+  <div class="panel">
+    <label for="code-in">Enter schedule code here</label>
+    <p class="small" style="margin:4px 0 8px">Returns to a previously generated schedule. Codes never
+       contain the characters 0, O, 1 or I.</p>
+    <div class="row">
+      <input type="text" id="code-in" aria-label="Schedule code" placeholder="XXXX-XXXX-XXXX" style="min-width:280px;font-family:ui-monospace,Menlo,monospace">
+      <button id="btn-load">Load</button>
+    </div>
+    <div id="code-err" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0">Diazepam equivalence used by this tool</h2>
+    <p class="small" style="margin:0 0 10px">Every calculation below converts to
+       diazepam-equivalent milligrams using these factors, taken from Table 1 of the Ashton
+       Manual. They are shown so you can check the arithmetic rather than take it on trust.
+       Equivalents are approximate and vary between individuals.</p>
+    <table id="equiv-table"></table>
+    <p class="small" style="margin:10px 0 0">Source: Ashton (2002), Table 1 &mdash;
+       Benzodiazepines and similar drugs. Only these four are supported; schedules involving
+       nitrazepam, temazepam, oxazepam, chlordiazepoxide or zopiclone are out of scope.</p>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0">1 &middot; Medications the patient is currently taking</h2>
+    <div class="opts" id="med-opts"></div>
+  </div>
+
+  <div class="panel hidden" id="freq-panel">
+    <h2 style="margin-top:0">2 &middot; How often is each taken?</h2>
+    <div id="freq-rows"></div>
+  </div>
+
+  <div class="panel hidden" id="dose-panel">
+    <h2 style="margin-top:0">3 &middot; Current dose at each time of day</h2>
+    <p class="small">Only doses achievable from available tablet strengths (whole or half tablets)
+       are offered.</p>
+    <div class="dosegrid"><table id="dose-table"></table></div>
+    <p class="small" id="eq-readout" style="margin-top:10px"></p>
+  </div>
+
+  <div class="panel hidden" id="date-panel">
+    <h2 style="margin-top:0">4 &middot; Taper start date</h2>
+    <div class="row">
+      <input type="text" id="start-date" aria-label="Taper start date, mm/dd/yy" placeholder="mm/dd/yy" style="width:150px">
+      <button id="btn-today">Today</button>
+      <span class="small" id="date-echo"></span>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:6px">
+    <button class="primary" id="btn-run" disabled>Run</button>
+    <button id="btn-info">About this tool</button>
+  </div>
+  <div id="run-err" role="status" aria-live="polite"></div>
+</div>
+
+<!-- ============ WORKING SCHEDULE ============ -->
+<div class="wrap noprint hidden" id="scr-work">
+  <h1>Working schedule</h1>
+  <p class="sub" id="work-summary"></p>
+
+  <div class="panel">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <strong style="font-size:14px">All steps:</strong>
+        <button id="btn-wk-minus">&minus;1 week</button>
+        <button id="btn-wk-plus">+1 week</button>
+        <button class="danger-btn" id="btn-reset">Reset to default</button>
+      </div>
+      <div class="row">
+        <button id="btn-back">&larr; Change entry</button>
+        <button class="primary" id="btn-finalize">Finalize &rarr;</button>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="tag tag-ashton">PUBLISHED</span> dose sequence cited from Ashton (2002)</span>
+      <span><span class="tag tag-extrap">GENERATED</span> produced by this tool</span>
+      <span>Weeks: min 1, max 4. Dose values are fixed and cannot be edited.</span>
+      <span style="width:100%">Citation identifies where a dose sequence came from. It is not an
+        endorsement of this schedule — durations are yours, and the schedule as a whole is generated.</span>
+    </div>
+    <div id="dispense-warn" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="panel" style="padding:0;overflow-x:auto">
+    <table id="work-table"></table>
+  </div>
+</div>
+
+<!-- ============ OUTPUTS ============ -->
+<div class="wrap hidden" id="scr-out">
+  <div class="noprint">
+    <h1>Finalized schedule</h1>
+    <div class="tabs">
+      <button class="tab on" data-doc="doc-hand">Patient handout</button>
+      <button class="tab" data-doc="doc-disp">Dispensing breakdown</button>
+      <button class="tab" data-doc="doc-code">Schedule code</button>
+    </div>
+    <div class="panel" id="disp-controls" style="margin-top:14px">
+      <div class="row">
+        <label for="disp-weeks">Weeks of medication per fill</label>
+        <select id="disp-weeks">
+          <option value="4" selected>4 weeks (default)</option>
+          <option value="3">3 weeks</option>
+          <option value="2">2 weeks</option>
+          <option value="1">1 week</option>
+        </select>
+        <label for="disp-from" style="margin-left:12px">Dispense from</label>
+        <input type="text" id="disp-from" aria-label="Dispense from date, mm/dd/yy" style="width:130px" placeholder="mm/dd/yy">
+        <button id="btn-disp-today">Today</button>
+        <button id="btn-disp-start">Start of schedule</button>
+        <label style="margin-left:12px;font-weight:400">
+          <input type="checkbox" id="disp-next-only"> Next fill only
+        </label>
+      </div>
+      <div id="disp-note" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="row" style="margin:14px 0">
+      <button class="primary" id="btn-print">Print / Save as PDF</button>
+      <button id="btn-work">&larr; Back to working schedule</button>
+      <button id="btn-restart">Start over</button>
+    </div>
+  </div>
+  <div id="docs"></div>
+<div class="wm" id="global-wm" aria-hidden="true">
+  <div class="big"><span>NOT A PRESCRIPTION
+PRESCRIBER REVIEW REQUIRED</span></div>
+  <div class="stamp-line" id="stamp-line"></div>
+</div>
+</div>
+
+<!-- ============ INFO SHEET ============ -->
+<div class="wrap noprint hidden" id="scr-info">
+  <div class="panel gate">
+    <h1>About this tool</h1>
+    <h3>What it is</h3>
+    <p>A calculator that turns a patient's current benzodiazepine regimen into a withdrawal schedule
+       based on the Ashton Manual. It runs entirely inside your browser. Nothing you type is
+       transmitted anywhere, stored on any server, or seen by anyone else.</p>
+    <h3>What it is not</h3>
+    <p>It is not validated, not approved, and not a clinical decision-making authority. It has not
+       been reviewed by any regulatory body. Every schedule it produces requires independent review
+       by a qualified prescriber before use.</p>
+    <h3>How it works</h3>
+    <p>A schedule has up to three parts. An <strong>on-ramp</strong> — labelled Generated —
+       bridges from the patient's actual dose onto a published Ashton schedule, substituting to
+       diazepam one dose at a time starting with the night dose, and reducing by no more than one
+       tenth at each step. From there the dose sequence follows a <strong>published schedule</strong>,
+       labelled Published and cited by schedule and stage number, reproduced from the manual.</p>
+    <p><strong>A citation is not an endorsement.</strong> Where a step reads
+       <em>Schedule 1, Stage 9 — Ashton 2002</em>, that identifies where the dose sequence came from
+       so a prescriber can check it against the source. It does not mean Professor Ashton recommended
+       this schedule for this patient. The entry point, the path, and the step durations are chosen by
+       this tool and by the prescriber. Where a duration falls outside the range Ashton published, the
+       step is marked <em>duration modified</em> and the published range is shown.</p>
+    <h3>The rules this tool follows</h3>
+    <p>Every generated step follows the rules below. They are stated here rather than left
+       implicit in the software, so that a prescriber can check the tool's reasoning against
+       the source instead of trusting the output.</p>
+    <div id="rules-block"></div>
+
+    <h3>Scope</h3>
+    <p>Alprazolam, lorazepam, clonazepam and diazepam only, using US tablet strengths. Seven
+       published schedules are in scope (Ashton Schedules 1, 2, 3, 5, 6, 7 and 8) giving 157 possible
+       join points. Schedules involving nitrazepam, temazepam, oxazepam, chlordiazepoxide or
+       zopiclone are excluded. The tool declines above 120mg diazepam-equivalent, the highest
+       published starting dose.</p>
+    <h3>Known defect carried from the source</h3>
+    <p>Schedule 1, Stage 9 prints a daily total of 80mg where its component doses sum to 70mg. This
+       is an error in the original manual. The component doses — what the patient actually takes —
+       are used, and the discrepancy is preserved rather than silently corrected.</p>
+    <h3>Schedule codes</h3>
+    <p>Each schedule gets a code that regenerates it exactly. The code stores the inputs, not the
+       output, and is checksummed so that a mistyped character is rejected rather than silently
+       producing a different schedule. Codes are locked to the tool version that made them.
+       <strong>A code encodes patient dosing and dates: treat it as protected health
+       information.</strong></p>
+    <p class="small" style="margin-top:24px">&copy; Professor C Heather Ashton — source material.
+       Tool provided AS IS, without warranty of any kind.</p>
+    <button id="btn-info-back">&larr; Back</button>
+  </div>
+</div>
+
+<script>/*ENGINE*/</script>
+<script>/*CODEC*/</script>
+<script>const DATA = /*DATA*/;</script>
+<script>/*APP*/</script>
+</body>
+</html>

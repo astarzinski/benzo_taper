@@ -1,0 +1,1856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benzodiazepine Taper Schedule Generator</title>
+<style>
+:root{
+  --ink:#14181d; --muted:#5b6672; --line:#d6dbe1; --bg:#f4f6f8; --panel:#fff;
+  --accent:#1c5d8c; --accent-soft:#e8f0f6;
+  --ashton:#1f6b45; --ashton-bg:#e8f4ed;
+  --extrap:#8a5a12; --extrap-bg:#fdf1dc;
+  --danger:#9c2b2b; --danger-bg:#fbeaea;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:19px;margin:32px 0 10px;letter-spacing:-.01em}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:0 0 12px}
+small,.small{font-size:13px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--line);background:#fff;padding:9px 14px}
+button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.primary:hover:not(:disabled){background:#164b70}
+.danger-btn{color:var(--danger);border-color:#e3bcbc}
+input[type=text],select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink)}
+input[type=text]:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hidden{display:none !important}
+label{font-weight:600;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.tag-ashton{background:var(--ashton-bg);color:var(--ashton)}
+.tag-extrap{background:var(--extrap-bg);color:var(--extrap)}
+.tag-current{background:#e9edf1;color:var(--muted)}
+.err{background:var(--danger-bg);border:1px solid #e3bcbc;color:var(--danger);padding:12px 14px;border-radius:8px;margin:12px 0}
+.note{background:var(--accent-soft);border:1px solid #c5d9e8;padding:12px 14px;border-radius:8px;margin:12px 0;font-size:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff;text-align:left}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt b{display:block;font-size:15px}
+.opt span{font-size:12px;color:var(--muted)}
+.wk{width:56px;text-align:center}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:10px 0}
+.gate{max-width:720px;margin:40px auto}
+.gate ul{margin:0 0 14px 18px;padding:0}
+.gate li{margin-bottom:7px}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:0;flex-wrap:wrap}
+.tab{border:none;background:none;padding:11px 15px;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:0;font-weight:600;color:var(--muted)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:19px;letter-spacing:.06em;
+  background:#101418;color:#e8eef4;padding:14px 16px;border-radius:8px;word-break:break-all;line-height:1.5}
+.phi{display:inline-block;background:var(--danger-bg);color:var(--danger);border:1px solid #e3bcbc;
+  font-size:11px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:4px}
+
+/* ---------- printed documents ---------- */
+.page{position:relative;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:34px 38px;margin-bottom:18px}
+/* Wide tables scroll inside the page rather than being clipped by it. Previously
+   .page{overflow:hidden} silently hid the Night dose column on a phone. */
+.page table{display:block;overflow-x:auto;max-width:100%}
+.page table tbody,.page table thead{display:table;width:100%}
+#equiv-table{display:block;overflow-x:auto;max-width:100%}
+.page h2:first-child{margin-top:0}
+.wm{position:fixed;inset:0;pointer-events:none;user-select:none;-webkit-user-select:none;z-index:5}
+#global-wm{display:none}
+.wm .big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.wm .big span{transform:rotate(-45deg);font-size:52px;font-weight:800;letter-spacing:.06em;
+  color:#000;opacity:.10;text-align:center;line-height:1.15;white-space:pre-line}
+.wm .stamp-line{display:none}
+.docfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:#333}
+.docfoot .stamp{font-family:ui-monospace,Menlo,monospace;margin-top:6px;color:#555}
+.hand{font-size:16px}
+.hand h3{margin-top:20px}
+.hand .clinic{border:2px solid var(--ink);padding:14px 16px;border-radius:8px;margin-bottom:18px;font-size:15px}
+.hand .line{display:inline-block;border-bottom:1px solid var(--ink);min-width:230px}
+
+@media print{
+  @page{margin:14mm 14mm 22mm}
+  html,body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .noprint{display:none !important}
+  .page{border:none;border-radius:0;padding:0;margin:0;overflow:visible}
+  .page + .page{page-break-before:always}
+  /* every finalized document prints, not just the tab on screen */
+  .page.hidden{display:block !important}
+  /* Watermark is a fixed CONTENT element, not a background: browsers do not print
+     background-image/background-color by default, which would silently drop it.
+     Fixed positioning makes it repeat on every printed page. */
+  /* The watermark container is fixed, so it — and everything inside it — repeats on
+     every printed sheet. The per-page identification strip rides along inside it. */
+  .wm{position:fixed;inset:0}
+  .wm .big span{font-size:64px;opacity:.13}
+  #global-wm{display:block}
+  .wm .stamp-line{display:block;position:absolute;left:0;right:0;bottom:0;
+    font:9px/1.4 ui-monospace,Menlo,monospace;color:#444;text-align:center;
+    border-top:1px solid #bbb;padding-top:3px}
+  tr,.keep{page-break-inside:avoid}
+  .page table,#equiv-table{display:table;overflow:visible}   /* print unclipped */
+  thead{display:table-header-group}
+  a{text-decoration:none;color:inherit}
+}
+@media (max-width:640px){
+  .wrap{padding:14px 12px 60px}
+  .page{padding:20px 16px}
+  table{font-size:13px}
+  th,td{padding:5px 6px}
+  .dosegrid{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ GATE ============ -->
+<div class="wrap noprint" id="scr-gate">
+  <div class="gate panel">
+    <h1>Benzodiazepine Taper Schedule Generator</h1>
+    <p class="sub">Derived from the Ashton Manual (Professor C&nbsp;Heather Ashton, revised 2002)</p>
+
+    <div class="err" style="background:var(--danger-bg)">
+      <strong>Read before continuing.</strong>
+      <ul style="margin:10px 0 0 18px">
+        <li>This tool is provided for <strong>research and informational purposes only</strong>. Its
+            outputs are <strong>not intended to be used for clinical care</strong>.</li>
+        <li>Any schedule generated here <strong>must be reviewed carefully by a qualified
+            prescriber</strong> before it is acted upon. Verify every dose independently.</li>
+        <li>Output is computer-generated and has <strong>not been reviewed by a clinician</strong>.
+            Steps labelled <em>Generated</em> are produced by this software and appear in no
+            published schedule. Steps labelled <em>Published</em> cite a dose sequence from Ashton
+            (2002) — a citation of source, <strong>not an endorsement</strong>. Professor Ashton, her
+            estate and the Benzodiazepine Information Coalition have not produced, reviewed or
+            endorsed this tool or anything it generates.</li>
+        <li>This is not medical advice, not a prescription, and not a substitute for professional
+            judgement. No warranty of any kind is provided, and the author accepts no liability
+            arising from any use of this tool or its output.</li>
+        <li>Schedule codes encode patient dosing and dates. <strong>Treat them as protected health
+            information.</strong></li>
+      </ul>
+    </div>
+
+    <div class="note">
+      For your convenience, a link to the CURES database is provided here:
+      <a href="https://cures.doj.ca.gov/" target="_blank" rel="noopener noreferrer"><strong>CURES
+      2.0 &mdash; California Controlled Substance Utilization Review and Evaluation System</strong></a>
+    </div>
+
+    <div class="row" style="margin-top:18px">
+      <button class="primary" id="btn-agree">I have read and agree</button>
+      <button id="btn-info-gate">What is this?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SETUP ============ -->
+<div class="wrap noprint hidden" id="scr-setup">
+  <h1>Benzodiazepine Taper Schedule Generator</h1>
+  <p class="sub">Enter the patient's <strong>current</strong> regimen. A schedule can be regenerated
+     from any dose at any time — if a patient stalls, come back and enter where they are now.</p>
+
+  <div class="panel">
+    <label for="code-in">Enter schedule code here</label>
+    <p class="small" style="margin:4px 0 8px">Returns to a previously generated schedule. Codes never
+       contain the characters 0, O, 1 or I.</p>
+    <div class="row">
+      <input type="text" id="code-in" aria-label="Schedule code" placeholder="XXXX-XXXX-XXXX" style="min-width:280px;font-family:ui-monospace,Menlo,monospace">
+      <button id="btn-load">Load</button>
+    </div>
+    <div id="code-err" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0">Diazepam equivalence used by this tool</h2>
+    <p class="small" style="margin:0 0 10px">Every calculation below converts to
+       diazepam-equivalent milligrams using these factors, taken from Table 1 of the Ashton
+       Manual. They are shown so you can check the arithmetic rather than take it on trust.
+       Equivalents are approximate and vary between individuals.</p>
+    <table id="equiv-table"></table>
+    <p class="small" style="margin:10px 0 0">Source: Ashton (2002), Table 1 &mdash;
+       Benzodiazepines and similar drugs. Only these four are supported; schedules involving
+       nitrazepam, temazepam, oxazepam, chlordiazepoxide or zopiclone are out of scope.</p>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0">1 &middot; Medications the patient is currently taking</h2>
+    <div class="opts" id="med-opts"></div>
+  </div>
+
+  <div class="panel hidden" id="freq-panel">
+    <h2 style="margin-top:0">2 &middot; How often is each taken?</h2>
+    <div id="freq-rows"></div>
+  </div>
+
+  <div class="panel hidden" id="dose-panel">
+    <h2 style="margin-top:0">3 &middot; Current dose at each time of day</h2>
+    <p class="small">Only doses achievable from available tablet strengths (whole or half tablets)
+       are offered.</p>
+    <div class="dosegrid"><table id="dose-table"></table></div>
+    <p class="small" id="eq-readout" style="margin-top:10px"></p>
+  </div>
+
+  <div class="panel hidden" id="date-panel">
+    <h2 style="margin-top:0">4 &middot; Taper start date</h2>
+    <div class="row">
+      <input type="text" id="start-date" aria-label="Taper start date, mm/dd/yy" placeholder="mm/dd/yy" style="width:150px">
+      <button id="btn-today">Today</button>
+      <span class="small" id="date-echo"></span>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:6px">
+    <button class="primary" id="btn-run" disabled>Run</button>
+    <button id="btn-info">About this tool</button>
+  </div>
+  <div id="run-err" role="status" aria-live="polite"></div>
+</div>
+
+<!-- ============ WORKING SCHEDULE ============ -->
+<div class="wrap noprint hidden" id="scr-work">
+  <h1>Working schedule</h1>
+  <p class="sub" id="work-summary"></p>
+
+  <div class="panel">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <strong style="font-size:14px">All steps:</strong>
+        <button id="btn-wk-minus">&minus;1 week</button>
+        <button id="btn-wk-plus">+1 week</button>
+        <button class="danger-btn" id="btn-reset">Reset to default</button>
+      </div>
+      <div class="row">
+        <button id="btn-back">&larr; Change entry</button>
+        <button class="primary" id="btn-finalize">Finalize &rarr;</button>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="tag tag-ashton">PUBLISHED</span> dose sequence cited from Ashton (2002)</span>
+      <span><span class="tag tag-extrap">GENERATED</span> produced by this tool</span>
+      <span>Weeks: min 1, max 4. Dose values are fixed and cannot be edited.</span>
+      <span style="width:100%">Citation identifies where a dose sequence came from. It is not an
+        endorsement of this schedule — durations are yours, and the schedule as a whole is generated.</span>
+    </div>
+    <div id="dispense-warn" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="panel" style="padding:0;overflow-x:auto">
+    <table id="work-table"></table>
+  </div>
+</div>
+
+<!-- ============ OUTPUTS ============ -->
+<div class="wrap hidden" id="scr-out">
+  <div class="noprint">
+    <h1>Finalized schedule</h1>
+    <div class="tabs">
+      <button class="tab on" data-doc="doc-hand">Patient handout</button>
+      <button class="tab" data-doc="doc-disp">Dispensing breakdown</button>
+      <button class="tab" data-doc="doc-code">Schedule code</button>
+    </div>
+    <div class="panel" id="disp-controls" style="margin-top:14px">
+      <div class="row">
+        <label for="disp-weeks">Weeks of medication per fill</label>
+        <select id="disp-weeks">
+          <option value="4" selected>4 weeks (default)</option>
+          <option value="3">3 weeks</option>
+          <option value="2">2 weeks</option>
+          <option value="1">1 week</option>
+        </select>
+        <label for="disp-from" style="margin-left:12px">Dispense from</label>
+        <input type="text" id="disp-from" aria-label="Dispense from date, mm/dd/yy" style="width:130px" placeholder="mm/dd/yy">
+        <button id="btn-disp-today">Today</button>
+        <button id="btn-disp-start">Start of schedule</button>
+        <label style="margin-left:12px;font-weight:400">
+          <input type="checkbox" id="disp-next-only"> Next fill only
+        </label>
+      </div>
+      <div id="disp-note" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="row" style="margin:14px 0">
+      <button class="primary" id="btn-print">Print / Save as PDF</button>
+      <button id="btn-work">&larr; Back to working schedule</button>
+      <button id="btn-restart">Start over</button>
+    </div>
+  </div>
+  <div id="docs"></div>
+<div class="wm" id="global-wm" aria-hidden="true">
+  <div class="big"><span>NOT A PRESCRIPTION
+PRESCRIBER REVIEW REQUIRED</span></div>
+  <div class="stamp-line" id="stamp-line"></div>
+</div>
+</div>
+
+<!-- ============ INFO SHEET ============ -->
+<div class="wrap noprint hidden" id="scr-info">
+  <div class="panel gate">
+    <h1>About this tool</h1>
+    <h3>What it is</h3>
+    <p>A calculator that turns a patient's current benzodiazepine regimen into a withdrawal schedule
+       based on the Ashton Manual. It runs entirely inside your browser. Nothing you type is
+       transmitted anywhere, stored on any server, or seen by anyone else.</p>
+    <h3>What it is not</h3>
+    <p>It is not validated, not approved, and not a clinical decision-making authority. It has not
+       been reviewed by any regulatory body. Every schedule it produces requires independent review
+       by a qualified prescriber before use.</p>
+    <h3>How it works</h3>
+    <p>A schedule has up to three parts. An <strong>on-ramp</strong> — labelled Generated —
+       bridges from the patient's actual dose onto a published Ashton schedule, substituting to
+       diazepam one dose at a time starting with the night dose, and reducing by no more than one
+       tenth at each step. From there the dose sequence follows a <strong>published schedule</strong>,
+       labelled Published and cited by schedule and stage number, reproduced from the manual.</p>
+    <p><strong>A citation is not an endorsement.</strong> Where a step reads
+       <em>Schedule 1, Stage 9 — Ashton 2002</em>, that identifies where the dose sequence came from
+       so a prescriber can check it against the source. It does not mean Professor Ashton recommended
+       this schedule for this patient. The entry point, the path, and the step durations are chosen by
+       this tool and by the prescriber. Where a duration falls outside the range Ashton published, the
+       step is marked <em>duration modified</em> and the published range is shown.</p>
+    <h3>The rules this tool follows</h3>
+    <p>Every generated step follows the rules below. They are stated here rather than left
+       implicit in the software, so that a prescriber can check the tool's reasoning against
+       the source instead of trusting the output.</p>
+    <div id="rules-block"></div>
+
+    <h3>Scope</h3>
+    <p>Alprazolam, lorazepam, clonazepam and diazepam only, using US tablet strengths. Seven
+       published schedules are in scope (Ashton Schedules 1, 2, 3, 5, 6, 7 and 8) giving 157 possible
+       join points. Schedules involving nitrazepam, temazepam, oxazepam, chlordiazepoxide or
+       zopiclone are excluded. The tool declines above 120mg diazepam-equivalent, the highest
+       published starting dose.</p>
+    <h3>Known defect carried from the source</h3>
+    <p>Schedule 1, Stage 9 prints a daily total of 80mg where its component doses sum to 70mg. This
+       is an error in the original manual. The component doses — what the patient actually takes —
+       are used, and the discrepancy is preserved rather than silently corrected.</p>
+    <h3>Schedule codes</h3>
+    <p>Each schedule gets a code that regenerates it exactly. The code stores the inputs, not the
+       output, and is checksummed so that a mistyped character is rejected rather than silently
+       producing a different schedule. Codes are locked to the tool version that made them.
+       <strong>A code encodes patient dosing and dates: treat it as protected health
+       information.</strong></p>
+    <p class="small" style="margin-top:24px">&copy; Professor C Heather Ashton — source material.
+       Tool provided AS IS, without warranty of any kind.</p>
+    <button id="btn-info-back">&larr; Back</button>
+  </div>
+</div>
+
+<script>/* benzo-taper engine — pure functions, no DOM. Testable under node. */
+'use strict';
+
+const ENGINE_VERSION = 3;
+const EQ = { alprazolam: 20, lorazepam: 10, clonazepam: 20, diazepam: 1 };
+const STRENGTHS = {
+  alprazolam: [0.25, 0.5, 1, 2],
+  lorazepam:  [0.5, 1, 2],
+  clonazepam: [0.25, 0.5, 1, 2],
+  diazepam:   [2, 5, 10],
+};
+const SLOTS = ['morning', 'midday', 'afternoon', 'night'];
+const SLOT_LABEL = { morning: 'Morning', midday: 'Midday', afternoon: 'Afternoon', night: 'Night' };
+const FREQ_SLOTS = {
+  QD:  ['morning'],
+  QHS: ['night'],
+  BID: ['morning', 'night'],
+  TID: ['morning', 'midday', 'night'],
+  QID: ['morning', 'midday', 'afternoon', 'night'],
+};
+const MED_OPTIONS = {
+  A:   ['alprazolam'],            L:   ['lorazepam'],
+  C:   ['clonazepam'],            D:   ['diazepam'],
+  AD:  ['alprazolam', 'diazepam'],LD:  ['lorazepam', 'diazepam'],
+  CD:  ['clonazepam', 'diazepam'],
+};
+const CEILING_EQ = 120;          // Schedule 1 starting dose
+// Diazepam exchanged per substitution step. Ashton uses 5mg on the lower-dose
+// schedules (3, 8) and 10mg on the highest (1); 60mg-equivalent is the dividing line.
+// Both values are whole dispensable diazepam doses, so the daily total stays flat.
+const EXCHANGE_SMALL = 5, EXCHANGE_LARGE = 10, EXCHANGE_THRESHOLD_EQ = 60;
+const MAX_DECREMENT = 0.10;      // Ashton: up to one tenth per decrement
+const DISPENSE_DAYS = 28;              // default: four weeks
+const MAX_DISPENSE_WEEKS = 4;          // hard ceiling — never dispense more at once
+// California, Schedule IV: at most 5 refills, refills capped at 120 days combined, and
+// the prescription expires 6 months from the date written. Whichever comes first ends it.
+const RX_MAX_REFILLS = 5, RX_MAX_REFILL_DAYS = 120, RX_VALID_MONTHS = 6;
+const MAX_ONRAMP_STEPS = 80;
+
+const r2 = n => Math.round(n * 1000) / 1000;
+// Tablets below this are dispensed whole — quartering a 0.25mg tablet is not
+// reliably reproducible, and Ashton never does it.
+const MIN_SPLITTABLE = 0.5;
+
+/* ---------- tablet arithmetic ---------- */
+
+// Can `dose` be built from whole/half tablets of `strengths`?
+function composable(dose, strengths) {
+  const T = Math.round(dose * 2 * 100);
+  if (T === 0) return true;
+  if (T < 0) return false;
+  const coins = [];
+  for (const s of strengths) {
+    coins.push(Math.round(s * 200));                                  // whole tablet
+    if (s >= MIN_SPLITTABLE) coins.push(Math.round(s * 100));         // half tablet
+  }
+  const reach = new Uint8Array(T + 1); reach[0] = 1;
+  for (let v = 1; v <= T; v++)
+    for (const c of coins) if (c <= v && reach[v - c]) { reach[v] = 1; break; }
+  return !!reach[T];
+}
+
+// Tablet breakdown for `dose`, returned as {strength: count} where a count of 1.5
+// means one whole plus one half. Halving is error-prone for patients, so a half
+// tablet costs far more than a whole one: the solver reaches for halves only when a
+// dose cannot be made without them.
+const HALF_PENALTY = 10;
+function breakdown(dose, strengths) {
+  const T = Math.round(dose * 2 * 100);          // work in half-milligram-hundredths
+  if (T === 0) return {};
+  const coins = [];
+  for (const s of strengths) {
+    const u = Math.round(s * 100);
+    coins.push({ v: u * 2, k: s, amt: 1, cost: 1 });                    // a whole tablet
+    if (s >= MIN_SPLITTABLE)
+      coins.push({ v: u, k: s, amt: 0.5, cost: HALF_PENALTY });         // half a tablet
+  }
+  const best = new Array(T + 1).fill(null); best[0] = {};
+  const cost = new Array(T + 1).fill(Infinity); cost[0] = 0;
+  for (let v = 1; v <= T; v++)
+    for (const c of coins)
+      if (c.v <= v && cost[v - c.v] + c.cost < cost[v]) {
+        cost[v] = cost[v - c.v] + c.cost;
+        best[v] = Object.assign({}, best[v - c.v]);
+        best[v][c.k] = (best[v][c.k] || 0) + c.amt;
+      }
+  return best[T];
+}
+
+let _achievable = null;
+function achievableDoses(drug) {
+  if (!_achievable) {
+    _achievable = {};
+    for (const d in STRENGTHS) {
+      const av = STRENGTHS[d], max = d === 'diazepam' ? 60 : 12, out = new Set();
+      // Enumerate at HALF THE SMALLEST TABLET, so e.g. alprazolam/clonazepam 0.25mg
+      // is representable. A coarser grid silently hid those doses from dose entry.
+      const grain = Math.min(...av) / 2;
+      for (let i = 0; i < av.length; i++) for (let j = i; j < av.length; j++) {
+        const combo = i === j ? [av[i]] : [av[i], av[j]];
+        for (let t = grain; t <= max; t += grain) {
+          const v = r2(t);
+          if (v <= max && composable(v, combo)) {
+            const bd = breakdown(v, combo);
+            const tabs = Object.values(bd).reduce((a, b) => a + b, 0);
+            if (tabs <= 8) out.add(v);
+          }
+        }
+      }
+      _achievable[d] = [...out].sort((a, b) => a - b);
+    }
+  }
+  return _achievable[drug];
+}
+
+function snapDown(drug, mg) {
+  const list = achievableDoses(drug);
+  let best = 0;
+  for (const v of list) if (v <= mg + 1e-9) best = v;
+  return best;
+}
+
+// Smallest achievable dose in [lo, hi]; null if none. Used so a reduction can never
+// overshoot below the join target's total.
+function snapBetween(drug, lo, hi) {
+  if (lo <= 0 && hi >= 0) return 0;
+  for (const v of achievableDoses(drug))
+    if (v >= lo - 1e-9 && v <= hi + 1e-9) return v;
+  return null;
+}
+
+/* ---------- THE RULES ----------------------------------------------------
+   Every step this tool generates follows the rules below. They are exported so
+   they can be displayed in the interface and audited against the source, rather
+   than being buried in code. Derived from Ashton (2002), Chapter II, and from
+   measuring the crossover steps of published Schedules 1, 3, 6 and 8. */
+
+const RULES = {
+  version: 1,
+  phases: 'Substitution runs to completion before any reduction begins. The two are ' +
+    'never interleaved: no dose is lowered while any of the original drug remains.',
+  crossover: [
+    'Substitute to diazepam one time-of-day dose at a time. Never convert a whole dose in one move.',
+    'Each step lowers the original drug by exactly ONE rung of its dispensable ladder — the ' +
+      'next lower dose makeable from whole or half tablets — and adds the diazepam equivalent ' +
+      'of what was removed. This is what makes each step 5mg of diazepam for lorazepam and ' +
+      '10mg for alprazolam and clonazepam: it follows from tablet geometry, not from a chosen number.',
+    'Advance whichever dose is least converted so far. Ties go to the night dose, then morning, ' +
+      'then midday, then afternoon.',
+    'The original drug is stopped once it reaches its smallest whole tablet; that tablet is not ' +
+      'split further.',
+    'The total daily diazepam-equivalent does not change during substitution.',
+  ],
+  reduction: [
+    'Reductions begin only once the patient is entirely on diazepam, or once the regimen matches ' +
+      'a published Ashton step.',
+    'No single reduction exceeds one tenth of the running total daily dose (Ashton, Chapter II).',
+    'The total daily dose never increases between consecutive steps.',
+    'The schedule ends at zero.',
+  ],
+  dispensing: [
+    'Every dose must be makeable from whole or half tablets of available strengths.',
+    'No more than two tablet strengths of any one drug in any single fill.',
+    'A fill never covers more than four weeks of medication; the prescriber may choose less.',
+    'No more than two drugs at any time.',
+    'Where the tablet grid forces a dose away from the ideal value, the step is flagged.',
+  ],
+  duration: [
+    'Published steps carry their published duration. Generated steps default to one week.',
+    'The prescriber may set any step between 1 and 4 weeks.',
+    'A duration outside the published range is flagged on the step and the published range shown.',
+  ],
+  ceiling: 'Declines above 120mg diazepam-equivalent, the highest published starting dose ' +
+    '(Schedule 1). Above that there is no published basis to extrapolate from.',
+};
+
+/* ---------- regimen helpers ---------- */
+// regimen = { morning:[[drug,mg],...], midday:[...], ... }  (absent slot = no dose)
+
+function regimenEq(reg) {
+  let t = 0;
+  for (const s of SLOTS) for (const [d, mg] of (reg[s] || [])) t += EQ[d] * mg;
+  return r2(t);
+}
+function slotEq(reg, slot) {
+  let t = 0; for (const [d, mg] of (reg[slot] || [])) t += EQ[d] * mg; return r2(t);
+}
+function drugsIn(reg) {
+  const s = new Set();
+  for (const sl of SLOTS) for (const [d] of (reg[sl] || [])) s.add(d);
+  return s;
+}
+function cloneReg(reg) {
+  const o = {};
+  for (const s of SLOTS) if (reg[s] && reg[s].length) o[s] = reg[s].map(x => x.slice());
+  return o;
+}
+function regKey(reg) {
+  return SLOTS.map(s => (reg[s] || []).slice()
+    .sort().map(([d, m]) => d + m).join('+')).join('|');
+}
+function setSlotDiazepam(reg, slot, mg) {
+  if (mg > 0) reg[slot] = [['diazepam', mg]]; else delete reg[slot];
+}
+
+/* ---------- the dispensable ladder ---------- */
+
+// The original drug is stopped at its smallest whole tablet rather than split further —
+// Ashton never splits a 0.25mg tablet, and a quarter-tablet is not reliably dispensable.
+function ladderFloor(drug) { return drug === 'diazepam' ? 0 : Math.min(...STRENGTHS[drug]); }
+
+// The next lower dispensable dose. Returns 0 when already at the floor.
+function nextRung(drug, from) {
+  const floor = ladderFloor(drug);
+  const below = achievableDoses(drug).filter(v => v < from - 1e-9 && v >= floor - 1e-9);
+  return below.length ? below[below.length - 1] : 0;
+}
+
+/* ---------- schedule data access ---------- */
+
+function stepRegimen(step) {
+  const o = {};
+  for (const s of SLOTS) if (step.slots[s]) o[s] = step.slots[s].map(x => x.slice());
+  return o;
+}
+
+/* ---------- join target selection ---------- */
+
+function findJoinTarget(DATA, reg) {
+  const patEq = regimenEq(reg);
+  const patDrugs = drugsIn(reg);
+  const nonDiaz = [...patDrugs].filter(d => d !== 'diazepam');
+  const patSlots = SLOTS.filter(s => (reg[s] || []).length);
+
+  let best = null;
+  for (const id in DATA.steps) {
+    const st = DATA.steps[id];
+    if (st.eq > patEq + 1e-9) continue;                 // never increase
+    const sreg = stepRegimen(st);
+    const sDrugs = drugsIn(sreg);
+    const sSlots = SLOTS.filter(s => (sreg[s] || []).length);
+
+    const gap = patEq - st.eq;
+    // prefer a target that still contains the patient's own drug — lets Ashton's
+    // published path do the crossover rather than our on-ramp
+    const drugBonus = nonDiaz.length && sDrugs.has(nonDiaz[0]) ? 1 : 0;
+    const slotDiff = Math.abs(sSlots.length - patSlots.length);
+    let distDiff = 0;
+    for (const s of SLOTS) distDiff += Math.abs(slotEq(sreg, s) - slotEq(reg, s));
+    // tiebreak toward the head of a schedule, so an exact match lands on the
+    // published starting dosage rather than an identical tail step of another chain
+    const startBonus = st.stage === 'start' ? 1 : 0;
+
+    const score = gap * 3 + slotDiff * 4 + distDiff * 0.5 - drugBonus * 25 - startBonus * 2;
+    if (!best || score < best.score) best = { id, step: st, score, gap };
+  }
+  return best;
+}
+
+/* ---------- on-ramp ---------- */
+
+// Returns { steps, targetId } | null | { fail }.
+//
+// STRICTLY SEQUENTIAL: substitution runs to completion before any reduction. No dose
+// is lowered while any of the original drug remains. At every point we check whether
+// the regimen has landed exactly on a published step — if it has, we hand off to
+// Ashton rather than continuing to generate.
+function exactMatch(DATA, reg) {
+  const k = regKey(reg);
+  let hit = null;
+  for (const id in DATA.steps) {
+    if (regKey(stepRegimen(DATA.steps[id])) !== k) continue;
+    if (DATA.steps[id].stage === 'start') return id;   // prefer a schedule's head
+    if (!hit) hit = id;
+  }
+  return hit;
+}
+
+function slotDiazepam(reg, slot) {
+  return (reg[slot] || []).filter(([d]) => d === 'diazepam').reduce((a, [, m]) => a + m, 0);
+}
+
+function buildOnRamp(DATA, reg0) {
+  const out = [];
+  let state = cloneReg(reg0);
+  const unit = regimenEq(reg0) > EXCHANGE_THRESHOLD_EQ ? EXCHANGE_LARGE : EXCHANGE_SMALL;
+
+  const push = (r, note, flag) => {
+    const prev = out.length ? out[out.length - 1].regimen : reg0;
+    if (regimenEq(r) > regimenEq(prev) + 1e-9) throw new Error('invariant: dose increased');
+    out.push({ regimen: cloneReg(r), note, flag, provenance: 'extrapolated',
+               weeks_default: 1, weeks_range: [1, 2] });
+  };
+
+  /* ---- PHASE 1 — substitution, one ladder rung at a time ---- */
+  const ORDER = ['night', 'morning', 'midday', 'afternoon'];
+  let guard = 0;
+  for (;;) {
+    const hit = exactMatch(DATA, state);
+    if (hit) return { steps: out, targetId: hit };
+    const open = ORDER.filter(s => (state[s] || []).some(([d]) => d !== 'diazepam'));
+    if (!open.length) break;                       // fully on diazepam
+    if (++guard > MAX_ONRAMP_STEPS) return null;
+
+    // advance whichever dose is least converted; ties by ORDER
+    let pick = null;
+    for (const s of open) {
+      const tot = slotEq(state, s);
+      const frac = tot ? slotDiazepam(state, s) / tot : 1;
+      if (!pick || frac < pick.frac - 1e-9) pick = { s, frac };
+    }
+    const slot = pick.s;
+    const [drug, from] = (state[slot] || []).find(([d]) => d !== 'diazepam');
+    // Remove the amount of original drug worth one exchange unit of diazepam, then
+    // let the tablet grid round the RESIDUAL to something dispensable.
+    let to = snapDown(drug, from - unit / EQ[drug]);
+    if (to >= from - 1e-9) to = nextRung(drug, from);      // must strictly decrease
+    if (to < ladderFloor(drug) - 1e-9) to = 0;             // don't split the smallest tablet
+    const removed = r2((from - to) * EQ[drug]);
+    const dzWant = r2(slotDiazepam(state, slot) + removed);
+    const dzGot = snapDown('diazepam', dzWant);
+    const shortfall = r2(dzWant - dzGot);
+
+    const next = [];
+    if (to > 0) next.push([drug, to]);
+    if (dzGot > 0) next.push(['diazepam', dzGot]);
+    if (next.length) state[slot] = next; else delete state[slot];
+
+    const where = SLOT_LABEL[slot].toLowerCase();
+    if (shortfall > 0.001 && out.length === 0 && regimenEq(state) < regimenEq(reg0) * (1 - MAX_DECREMENT))
+      return { fail: 'This regimen cannot be substituted to diazepam without either a dose ' +
+        'increase or a cut larger than 10% in one step, given available tablet sizes.' };
+    push(state,
+      to > 0
+        ? `Substitute part of the ${where} dose \u2014 ${drug} ${from}mg down to ${to}mg, ` +
+          `with diazepam ${dzGot}mg`
+        : `Stop ${drug} in the ${where} dose, replaced by diazepam ${dzGot}mg`,
+      shortfall > 0.001
+        ? `Tablet sizes gave ${dzGot}mg diazepam where ${dzWant}mg was the exact equivalent ` +
+          `(${shortfall}mg short).`
+        : null);
+  }
+
+  /* ---- PHASE 2 — reduction. Only reached once entirely on diazepam. ---- */
+  const target = findJoinTarget(DATA, state);
+  if (!target) return null;
+  const targetReg = stepRegimen(target.step);
+  const tgtEq = regimenEq(targetReg);
+
+  guard = 0;
+  while (regKey(state) !== regKey(targetReg)) {
+    if (++guard > MAX_ONRAMP_STEPS) return null;
+    const cur = regimenEq(state);
+
+    if (cur > tgtEq + 1e-9) {
+      const room = Math.max(cur * MAX_DECREMENT, 1);
+      const headroom = cur - tgtEq;
+      const cands = SLOTS.filter(s => slotEq(state, s) > 0)
+        .sort((a, b) => (slotEq(state, b) - slotEq(targetReg, b))
+                      - (slotEq(state, a) - slotEq(targetReg, a)));
+      let moved = false;
+      for (const slot of cands) {
+        const have = slotEq(state, slot);
+        const lo = Math.max(0, have - Math.min(room, headroom));
+        const v = snapBetween('diazepam', lo, have - 1e-6);
+        if (v === null) continue;
+        setSlotDiazepam(state, slot, v);
+        push(state, v === 0
+          ? `Stop the ${SLOT_LABEL[slot].toLowerCase()} dose`
+          : `Reduce the ${SLOT_LABEL[slot].toLowerCase()} dose to diazepam ${v}mg`);
+        moved = true; break;
+      }
+      if (!moved) return null;
+    } else {
+      state = cloneReg(targetReg);
+      push(state, 'Redistribute the same total daily dose across the day');
+    }
+  }
+  return { steps: out, targetId: target.id };
+}
+
+/* ---------- full schedule ---------- */
+
+function generate(DATA, input) {
+  const reg = input.regimen;
+  const patEq = regimenEq(reg);
+  if (patEq <= 0) return { error: 'Enter at least one dose.' };
+  if (patEq > CEILING_EQ)
+    return { error: `Total daily dose is ${patEq}mg diazepam-equivalent, above the ` +
+      `${CEILING_EQ}mg ceiling of the published schedules (Schedule 1). This tool ` +
+      `cannot generate a schedule from here — specialist referral is indicated.` };
+
+  if (!findJoinTarget(DATA, reg))
+    return { error: 'No published schedule step at or below this dose.' };
+
+  const ramp = buildOnRamp(DATA, reg);
+  if (ramp === null) {
+    // Almost always caused by the daily dose being concentrated in one administration,
+    // so no single slot can be reduced without breaching the 10% rule. Say so.
+    const big = SLOTS.filter(s => slotEq(reg, s) > 0)
+      .sort((a, b) => slotEq(reg, b) - slotEq(reg, a))[0];
+    const share = big ? Math.round(100 * slotEq(reg, big) / patEq) : 0;
+    return { error: 'Could not construct a safe path from this regimen to a published schedule ' +
+      'without exceeding a 10% reduction in a single step.' +
+      (big && share >= 50
+        ? ` ${share}% of the daily dose is in the ${SLOT_LABEL[big].toLowerCase()} dose. ` +
+          'Splitting the daily dose across more times of day would usually make a taper possible.'
+        : ' Redistributing the daily dose across more times of day would usually make a taper possible.') };
+  }
+  if (ramp.fail) return { error: ramp.fail };
+  const onramp = ramp.steps;
+
+  const steps = [];
+  // starting point, shown for reference, zero duration
+  steps.push({ regimen: cloneReg(reg), provenance: 'current', label: 'Current regimen',
+               weeks: 0, weeks_default: 0, note: 'As entered. No change yet.' });
+  for (const s of onramp)
+    steps.push({ regimen: s.regimen, provenance: 'extrapolated', note: s.note,
+                 weeks: s.weeks_default, weeks_default: s.weeks_default, weeks_range: s.weeks_range });
+
+  let id = ramp.targetId, guard = 0;
+  while (id && guard++ < 400) {
+    const st = DATA.steps[id];
+    steps.push({ regimen: stepRegimen(st), provenance: 'ashton',
+                 source: `Schedule ${st.sched}, ${st.stage === 'start' ? 'starting dosage' : 'Stage ' + st.stage}`,
+                 weeks: st.weeks_default, weeks_default: st.weeks_default,
+                 weeks_range: st.weeks_range, eq_erratum: st.printed_eq !== null &&
+                   Math.abs(st.printed_eq - st.eq) > 0.001 ? st.printed_eq : null });
+    id = st.next;
+  }
+  // Collapse consecutive identical regimens (schedule chains can overlap at the seam).
+  const merged = [steps[0]];
+  for (let i = 1; i < steps.length; i++) {
+    const prev = merged[merged.length - 1];
+    if (regKey(steps[i].regimen) === regKey(prev.regimen) && prev.provenance !== 'current') {
+      prev.weeks += steps[i].weeks;
+      prev.weeks_default += steps[i].weeks_default;
+      if (prev.weeks_range && steps[i].weeks_range)
+        prev.weeks_range = [prev.weeks_range[0] + steps[i].weeks_range[0],
+                            prev.weeks_range[1] + steps[i].weeks_range[1]];
+      else if (steps[i].weeks_range) prev.weeks_range = steps[i].weeks_range.slice();
+      if (steps[i].source) prev.source = (prev.source ? prev.source + '; ' : '') + steps[i].source;
+      // If an on-ramp step lands exactly on a published regimen, it IS that published
+      // step — label it Ashton rather than leaving it marked as our own extrapolation.
+      if (steps[i].provenance === 'ashton' && prev.provenance === 'extrapolated') {
+        prev.provenance = 'ashton';
+        if (steps[i].eq_erratum) prev.eq_erratum = steps[i].eq_erratum;
+      }
+      continue;
+    }
+    merged.push(steps[i]);
+  }
+  merged.push({ regimen: {}, provenance: 'end', label: 'Stop', weeks: 0, weeks_default: 0,
+                note: 'Benzodiazepine withdrawal complete.' });
+
+  for (let i = 1; i < merged.length; i++)
+    if (regimenEq(merged[i].regimen) > regimenEq(merged[i - 1].regimen) + 1e-9)
+      return { error: `Internal error: dose increases at step ${i}.` };
+
+  return { steps: merged, joinAt: ramp.targetId, onrampLength: onramp.length, patEq };
+}
+
+/* ---------- dates & dispensing ---------- */
+
+// Calendar arithmetic, never fixed 24-hour blocks. Adding 86400000ms across a daylight
+// saving transition lands on 23:00 the previous day, which silently shifted every date
+// from November to March by one and made "4 week" steps span 27 or 29 days.
+function addDays(d, n) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
+function daysBetween(a, b) {           // inclusive-exclusive day count, DST-safe
+  return Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) -
+                     Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+}
+function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+
+function applyDates(steps, startDate) {
+  let cur = startOfDay(startDate);
+  for (const s of steps) {
+    s.start = startOfDay(cur);
+    const days = (s.weeks || 0) * 7;
+    s.end = addDays(cur, Math.max(0, days - 1));
+    if (days > 0) cur = addDays(cur, days);
+  }
+  return steps;
+}
+
+// Choose <=2 strengths per drug across a set of doses.
+function selectStrengths(drug, doses) {
+  const av = STRENGTHS[drug];
+  const uniq = [...new Set(doses.filter(d => d > 0))].sort((a, b) => a - b);
+  if (!uniq.length) return { strengths: [], ok: true };
+  // Within the two-strength limit, minimise TABLETS FIRST, then strength count.
+  // Preferring fewer strengths first would hand a patient nine 2mg tablets where one
+  // 10mg plus four 2mg would do.
+  let best = null;
+  for (let n = 1; n <= 2; n++) {
+    for (const combo of combinations(av, n)) {
+      if (!uniq.every(d => composable(d, combo))) continue;
+      const tabs = uniq.reduce((a, d) =>
+        a + Object.values(breakdown(d, combo)).reduce((x, y) => x + y, 0), 0);
+      if (!best || tabs < best.tabs || (tabs === best.tabs && combo.length < best.strengths.length))
+        best = { strengths: combo, tabs };
+    }
+  }
+  if (best) return { strengths: best.strengths, ok: true };
+  for (let n = 3; n <= av.length; n++)
+    for (const combo of combinations(av, n))
+      if (uniq.every(d => composable(d, combo)))
+        return { strengths: combo, ok: false };
+  return { strengths: av, ok: false };
+}
+function combinations(arr, n) {
+  const out = [];
+  (function rec(start, cur) {
+    if (cur.length === n) { out.push(cur.slice()); return; }
+    for (let i = start; i < arr.length; i++) { cur.push(arr[i]); rec(i + 1, cur); cur.pop(); }
+  })(0, []);
+  return out;
+}
+
+function buildDispensing(steps, opts) {
+  opts = opts || {};
+  const weeks = Math.max(1, Math.min(MAX_DISPENSE_WEEKS, opts.weeks || 4));
+  const span = weeks * 7;
+  const active = steps.filter(s => s.weeks > 0 && Object.keys(s.regimen).length);
+  if (!active.length) return [];
+  const first = active[0].start, last = active[active.length - 1].end;
+  // Dispensing is a query over the schedule, not a property of it: the prescriber can
+  // ask for any window starting anywhere, and nothing about the taper changes.
+  let begin = first;
+  if (opts.from instanceof Date && !isNaN(opts.from) && startOfDay(opts.from) > first)
+    begin = startOfDay(opts.from);
+  if (begin > last) return [];
+  const periods = [];
+  let cur = startOfDay(begin), n = 1;
+  while (cur <= last) {
+    const pEndRaw = addDays(cur, span - 1);
+    const pEnd = pEndRaw > last ? startOfDay(last) : pEndRaw;
+    const inWin = active.filter(s => s.end >= cur && s.start <= pEnd);
+    const perDrug = {};
+    for (const s of inWin) {
+      const ovStart = s.start > cur ? s.start : cur;
+      const ovEnd = s.end < pEnd ? s.end : pEnd;
+      const days = daysBetween(ovStart, ovEnd) + 1;
+      for (const slot of SLOTS) for (const [drug, mg] of (s.regimen[slot] || [])) {
+        perDrug[drug] = perDrug[drug] || { doses: new Set(), daily: [] };
+        perDrug[drug].doses.add(mg);
+        perDrug[drug].daily.push({ mg, days });
+      }
+    }
+    const lines = [];
+    const chosen = {};
+    let violation = false;
+    for (const drug in perDrug) {
+      const sel = selectStrengths(drug, [...perDrug[drug].doses]);
+      chosen[drug] = sel.strengths;
+      if (!sel.ok) violation = true;
+      const tally = {};
+      for (const { mg, days } of perDrug[drug].daily) {
+        const bd = breakdown(mg, sel.strengths) || {};
+        for (const k in bd) tally[k] = (tally[k] || 0) + bd[k] * days;
+      }
+      for (const k of Object.keys(tally).sort((a, b) => b - a))
+        lines.push({ drug, strength: +k, qty: Math.ceil(tally[k]) });
+    }
+    periods.push({ n, start: cur, end: pEnd, lines, violation, strengths: chosen,
+                   days: daysBetween(cur, pEnd) + 1,
+                   steps: inWin.map(s => steps.indexOf(s)) });
+    cur = addDays(pEnd, 1); n++;
+  }
+  return periods;
+}
+
+// Group fills into prescriptions. A Schedule IV prescription ends at whichever limit
+// binds first: 5 refills, 120 days of refills, or 6 months from the date written.
+function groupIntoPrescriptions(periods) {
+  const out = [];
+  let cur = null;
+  for (const p of periods) {
+    if (!cur) {
+      cur = { rx: 1, periods: [p], refills: 0, refillDays: 0, written: p.start };
+      out.push(cur); continue;
+    }
+    const refills = cur.refills + 1;
+    const refillDays = cur.refillDays + p.days;
+    const months = daysBetween(cur.written, p.end) / 30.44;
+    let reason = null;
+    if (refills > RX_MAX_REFILLS) reason = `${RX_MAX_REFILLS}-refill limit reached`;
+    else if (refillDays > RX_MAX_REFILL_DAYS) reason = `${RX_MAX_REFILL_DAYS}-day refill limit reached`;
+    else if (months > RX_VALID_MONTHS) reason = `prescription expires ${RX_VALID_MONTHS} months after it is written`;
+    if (reason) {
+      cur.endedBecause = reason;
+      cur = { rx: out.length + 1, periods: [p], refills: 0, refillDays: 0, written: p.start };
+      out.push(cur);
+    } else { cur.periods.push(p); cur.refills = refills; cur.refillDays = refillDays; }
+  }
+  return out;
+}
+
+/* ---------- instructions ---------- */
+
+const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+function tabletPhrase(count, strength, drug) {
+  const whole = Math.floor(count), frac = count - whole;
+  let q;
+  if (frac < 1e-9) q = `${WORDS[whole] || whole} tablet${whole === 1 ? '' : 's'}`;
+  else if (whole === 0) q = 'half a tablet';
+  else q = `${WORDS[whole] || whole} and a half tablets`;
+  return `${q} of ${strength}mg ${drug}`;
+}
+const SLOT_PREP = { morning: 'in the morning', midday: 'at midday',
+                    afternoon: 'in the afternoon', night: 'at night' };
+
+// Compact per-slot cell, e.g. "1/2 x 1mg alprazolam + 2 x 10mg diazepam"
+function slotDoseText(regimen, slot, strengthsByDrug) {
+  const out = [];
+  for (const [drug, mg] of (regimen[slot] || [])) {
+    const st = (strengthsByDrug && strengthsByDrug[drug]) || selectStrengths(drug, [mg]).strengths;
+    const bd = breakdown(mg, st) || {};
+    for (const k of Object.keys(bd).sort((a, b) => b - a)) {
+      const n = bd[k];
+      const q = Number.isInteger(n) ? String(n) : (n === 0.5 ? '\u00bd' : Math.floor(n) + '\u00bd');
+      out.push(`${q} \u00d7 ${k}mg ${drug}`);
+    }
+  }
+  return out.length ? out.join(' + ') : '\u2014';
+}
+
+function instructionFor(regimen, strengthsByDrug) {
+  const parts = [];
+  for (const slot of SLOTS) {
+    const bits = [];
+    for (const [drug, mg] of (regimen[slot] || [])) {
+      const st = (strengthsByDrug && strengthsByDrug[drug]) || selectStrengths(drug, [mg]).strengths;
+      const bd = breakdown(mg, st) || {};
+      Object.keys(bd).sort((a, b) => b - a).forEach(k => bits.push(tabletPhrase(bd[k], +k, drug)));
+    }
+    if (bits.length) parts.push(`${bits.join(' and ')} ${SLOT_PREP[slot]}`);
+  }
+  if (!parts.length) return 'No dose.';
+  return 'Take ' + parts.join('; ') + '.';
+}
+
+
+const ENG = { ENGINE_VERSION, RULES, EQ, STRENGTHS, SLOTS, SLOT_LABEL, FREQ_SLOTS, MED_OPTIONS,
+  CEILING_EQ, DISPENSE_DAYS, MAX_DISPENSE_WEEKS, groupIntoPrescriptions, composable, breakdown, achievableDoses, snapDown, snapBetween,
+  regimenEq, slotEq, drugsIn, cloneReg, stepRegimen, findJoinTarget, buildOnRamp,
+  generate, applyDates, selectStrengths, buildDispensing, instructionFor, tabletPhrase, slotDoseText };
+</script>
+<script>/* Schedule code — base32, checksummed, version-locked.
+   The code stores INPUTS, not output. The engine is deterministic, so inputs
+   regenerate the schedule exactly. */
+'use strict';
+
+const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';   // no 0/O, no 1/I; uppercase only
+const EPOCH = Date.UTC(2020, 0, 1);
+const MED_KEYS = ['A', 'L', 'C', 'D', 'AD', 'LD', 'CD'];
+const FREQ_KEYS = ['QD', 'QHS', 'BID', 'TID', 'QID'];
+
+function BitWriter() { this.bits = []; }
+BitWriter.prototype.w = function (val, n) {
+  for (let i = n - 1; i >= 0; i--) this.bits.push((val >> i) & 1);
+  return this;
+};
+BitWriter.prototype.bytes = function () {
+  const b = this.bits.slice();
+  while (b.length % 8) b.push(0);
+  const out = [];
+  for (let i = 0; i < b.length; i += 8) {
+    let v = 0; for (let j = 0; j < 8; j++) v = (v << 1) | b[i + j];
+    out.push(v);
+  }
+  return out;
+};
+
+function BitReader(bits) { this.bits = bits; this.i = 0; }
+BitReader.prototype.r = function (n) {
+  if (this.i + n > this.bits.length) throw new Error('overrun');
+  let v = 0;
+  for (let k = 0; k < n; k++) { v = (v << 1) | (this.bits[this.i++] | 0); }
+  return v;
+};
+
+function crc16(bytes) {
+  let crc = 0xFFFF;
+  for (const b of bytes) {
+    crc ^= b << 8;
+    for (let i = 0; i < 8; i++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+  }
+  return crc & 0xFFFF;
+}
+
+function bitsToB32(bits) {
+  const b = bits.slice();
+  while (b.length % 5) b.push(0);
+  let s = '';
+  for (let i = 0; i < b.length; i += 5) {
+    let v = 0; for (let j = 0; j < 5; j++) v = (v << 1) | b[i + j];
+    s += ALPHABET[v];
+  }
+  return s;
+}
+function b32ToBits(str) {
+  const bits = [];
+  for (const ch of str) {
+    const v = ALPHABET.indexOf(ch);
+    if (v < 0) return null;
+    for (let i = 4; i >= 0; i--) bits.push((v >> i) & 1);
+  }
+  return bits;
+}
+function group(s) { return (s.match(/.{1,4}/g) || []).join('-'); }
+function normalise(s) {
+  return String(s || '').toUpperCase().replace(/[^0-9A-Z]/g, '')
+    .replace(/0/g, 'O').replace(/1/g, 'I')      // fix the two most common mistypes
+    .replace(/O/g, ' ').replace(/I/g, ' ');  // then reject them
+}
+
+/* input = { medKey, freqs:{drug:FREQ}, doses:{drug:{slot:mg}}, startDate:Date, weeks:[..]|null, weekDefaults:[..] } */
+
+function encode(input, ENG) {
+  const w = new BitWriter();
+  w.w(ENG.ENGINE_VERSION, 4);
+  w.w(MED_KEYS.indexOf(input.medKey), 3);
+  const drugs = ENG.MED_OPTIONS[input.medKey];
+  for (const d of drugs) w.w(FREQ_KEYS.indexOf(input.freqs[d]), 3);
+  for (const d of drugs) {
+    const list = ENG.achievableDoses(d);
+    for (const slot of ENG.FREQ_SLOTS[input.freqs[d]]) {
+      const idx = list.indexOf(input.doses[d][slot]);
+      if (idx < 0) throw new Error('dose not achievable: ' + d + ' ' + input.doses[d][slot]);
+      w.w(idx, 9);
+    }
+  }
+  const days = Math.round((Date.UTC(input.startDate.getFullYear(), input.startDate.getMonth(),
+                                   input.startDate.getDate()) - EPOCH) / 86400000);
+  // Refuse rather than clamp: clamping silently issued a schedule for a different date
+  // than the one printed on it.
+  if (!isFinite(days) || days < 0 || days > 32767)
+    throw new Error('date outside the representable range (2020-01-01 to 2109-09-18)');
+  w.w(days, 15);
+
+  // week plan
+  const wk = input.weeks, def = input.weekDefaults;
+  const adj = i => def[i] === 0 ? 0 : null;              // fixed-duration steps stay 0
+  if (!wk || wk.every((v, i) => v === def[i])) w.w(0, 2);
+  else {
+    // Offset is measured on the first ADJUSTABLE step; the leading "current regimen"
+    // step is always 0 weeks and previously made this test never match.
+    const k = def.findIndex(v => v > 0);
+    const off = k >= 0 ? wk[k] - def[k] : 0;
+    const uniform = k >= 0 && wk.every((v, i) =>
+      v === (adj(i) === 0 ? 0 : Math.max(1, Math.min(4, def[i] + off))));
+    if (uniform && off >= -3 && off <= 3) { w.w(1, 2); w.w(off + 3, 3); }
+    else {
+      w.w(2, 2);
+      const runs = [];
+      for (let i = 0; i < wk.length; i++) {
+        const v = Math.max(0, Math.min(4, wk[i] | 0));
+        if (runs.length && runs[runs.length - 1].v === v && runs[runs.length - 1].n < 63)
+          runs[runs.length - 1].n++;
+        else runs.push({ v, n: 1 });
+      }
+      if (runs.length > 255) throw new Error('week plan too fragmented to encode');
+      w.w(runs.length, 8);
+      for (const r of runs) { w.w(r.n, 6); w.w(r.v, 3); }
+    }
+  }
+  const crc = crc16(w.bytes());
+  w.w(crc, 16);
+  return group(bitsToB32(w.bits));
+}
+
+function decode(codeStr, ENG) {
+  const s = normalise(codeStr);
+  if (!s || s.indexOf(' ') >= 0) return { error: 'That code contains a character this system never uses (0, O, 1 or I). Please re-check it.' };
+  const bits = b32ToBits(s);
+  if (!bits) return { error: 'Invalid characters in code.' };
+  if (bits.length < 40) return { error: 'That code is too short to be valid.' };
+
+  const BAD = { error: 'That code failed its checksum — it has almost certainly been ' +
+                       'mistyped. Please re-enter it exactly as printed.' };
+
+  // The payload is self-describing, so its exact bit length is known after parsing.
+  // That makes the payload/CRC boundary unambiguous — one checksum test, not five.
+  let parsed;
+  try { parsed = read(bits, ENG); } catch (e) { return BAD; }
+  if (!parsed || parsed.error) return BAD;
+
+  const L = parsed._bits;
+  if (L + 16 > bits.length) return BAD;
+  let crcVal = 0;
+  for (let i = L; i < L + 16; i++) crcVal = (crcVal << 1) | bits[i];
+  const wtmp = new BitWriter(); wtmp.bits = bits.slice(0, L);
+  if (crc16(wtmp.bytes()) !== crcVal) return BAD;
+  // Everything after the CRC is base32 padding: it must be zero AND there must be less
+  // than one whole character of it, so that appending characters cannot validate.
+  if (bits.length - (L + 16) >= 5) return BAD;
+  for (let i = L + 16; i < bits.length; i++) if (bits[i]) return BAD;
+
+  // Only once the checksum passes is a version mismatch meaningful. Reporting it first
+  // told users their code was from another release when they had simply mistyped.
+  if (parsed.ver !== ENG.ENGINE_VERSION)
+    return { error: `That code was produced by version ${parsed.ver} of this tool; this is ` +
+      `version ${ENG.ENGINE_VERSION}. Schedules are version-locked so that a code always ` +
+      `regenerates exactly what was originally issued.` };
+
+  delete parsed._bits; delete parsed.ver;
+  return parsed;
+}
+
+function read(payloadBits, ENG) {
+  const r = new BitReader(payloadBits);
+  const ver = r.r(4);
+  const medKey = MED_KEYS[r.r(3)];
+  if (!medKey) return { error: 'Unrecognised medication combination in code.' };
+  const drugs = ENG.MED_OPTIONS[medKey];
+  const freqs = {};
+  for (const d of drugs) {
+    const f = FREQ_KEYS[r.r(3)];
+    if (!f) return { error: 'Unrecognised frequency in code.' };
+    freqs[d] = f;
+  }
+  const doses = {};
+  for (const d of drugs) {
+    doses[d] = {};
+    const list = ENG.achievableDoses(d);
+    for (const slot of ENG.FREQ_SLOTS[freqs[d]]) {
+      const idx = r.r(9);
+      if (idx >= list.length) return { error: 'Dose index out of range in code.' };
+      doses[d][slot] = list[idx];
+    }
+  }
+  const days = r.r(15);
+  const startDate = new Date(EPOCH + days * 86400000);
+  const startLocal = new Date(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate());
+
+  const mode = r.r(2);
+  let weekPlan = null;
+  if (mode === 1) {
+    const raw = r.r(3);
+    if (raw > 6) throw new Error('offset out of range');       // encoder only writes 0..6
+    weekPlan = { type: 'offset', offset: raw - 3 };
+  } else if (mode === 2) {
+    const n = r.r(8), arr = [];
+    if (n === 0) throw new Error('empty week plan');            // never emitted
+    for (let i = 0; i < n; i++) {
+      const len = r.r(6), v = r.r(3);
+      if (len === 0 || v > 4) throw new Error('bad week run');
+      for (let k = 0; k < len; k++) arr.push(v);
+    }
+    weekPlan = { type: 'explicit', weeks: arr };
+  } else if (mode === 3) throw new Error('reserved week mode');
+  return { ver, medKey, freqs, doses, startDate: startLocal, weekPlan, _bits: r.i };
+}
+
+
+const CODEC = { encode, decode, ALPHABET, MED_KEYS, FREQ_KEYS, group, crc16 };
+</script>
+<script>const DATA = {"steps":{"s1_start":{"sched":1,"stage":"start","slots":{"morning":[["alprazolam",2.0]],"midday":[["alprazolam",2.0]],"night":[["alprazolam",2.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":120.0,"printed_eq":120.0,"next":"s1_1"},"s1_1":{"sched":1,"stage":1,"slots":{"morning":[["alprazolam",2.0]],"midday":[["alprazolam",2.0]],"night":[["alprazolam",1.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":120.0,"printed_eq":120.0,"next":"s1_2"},"s1_2":{"sched":1,"stage":2,"slots":{"morning":[["alprazolam",2.0]],"midday":[["alprazolam",2.0]],"night":[["alprazolam",1.0],["diazepam",20.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":120.0,"printed_eq":120.0,"next":"s1_3"},"s1_3":{"sched":1,"stage":3,"slots":{"morning":[["alprazolam",1.5],["diazepam",10.0]],"midday":[["alprazolam",2.0]],"night":[["alprazolam",1.0],["diazepam",20.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":120.0,"printed_eq":120.0,"next":"s1_4"},"s1_4":{"sched":1,"stage":4,"slots":{"morning":[["alprazolam",1.0],["diazepam",20.0]],"midday":[["alprazolam",2.0]],"night":[["alprazolam",1.0],["diazepam",20.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":120.0,"printed_eq":120.0,"next":"s1_5"},"s1_5":{"sched":1,"stage":5,"slots":{"morning":[["alprazolam",1.0],["diazepam",20.0]],"midday":[["alprazolam",1.0],["diazepam",10.0]],"night":[["alprazolam",1.0],["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":110.0,"printed_eq":110.0,"next":"s1_6"},"s1_6":{"sched":1,"stage":6,"slots":{"morning":[["alprazolam",1.0],["diazepam",20.0]],"midday":[["alprazolam",1.0],["diazepam",10.0]],"night":[["alprazolam",0.5],["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":100.0,"printed_eq":100.0,"next":"s1_7"},"s1_7":{"sched":1,"stage":7,"slots":{"morning":[["alprazolam",1.0],["diazepam",20.0]],"midday":[["alprazolam",1.0],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":90.0,"printed_eq":90.0,"next":"s1_8"},"s1_8":{"sched":1,"stage":8,"slots":{"morning":[["alprazolam",0.5],["diazepam",20.0]],"midday":[["alprazolam",1.0],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":80.0,"printed_eq":80.0,"next":"s1_9"},"s1_9":{"sched":1,"stage":9,"slots":{"morning":[["alprazolam",0.5],["diazepam",20.0]],"midday":[["alprazolam",0.5],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":70.0,"printed_eq":80.0,"next":"s1_10"},"s1_10":{"sched":1,"stage":10,"slots":{"morning":[["alprazolam",0.5],["diazepam",20.0]],"midday":[["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":60.0,"printed_eq":60.0,"next":"s1_11"},"s1_11":{"sched":1,"stage":11,"slots":{"morning":[["diazepam",20.0]],"midday":[["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":50.0,"printed_eq":50.0,"next":"s1_12"},"s1_12":{"sched":1,"stage":12,"slots":{"morning":[["diazepam",25.0]],"night":[["diazepam",25.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":50.0,"printed_eq":50.0,"next":"s1_13"},"s1_13":{"sched":1,"stage":13,"slots":{"morning":[["diazepam",20.0]],"night":[["diazepam",25.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":45.0,"printed_eq":45.0,"next":"s1_14"},"s1_14":{"sched":1,"stage":14,"slots":{"morning":[["diazepam",20.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":40.0,"printed_eq":40.0,"next":"s2_start","chains_to":"s2_start"},"s2_start":{"sched":2,"stage":"start","slots":{"morning":[["diazepam",20.0]],"night":[["diazepam",20.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":40.0,"printed_eq":40.0,"next":"s2_1"},"s2_1":{"sched":2,"stage":1,"slots":{"morning":[["diazepam",18.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":38.0,"printed_eq":38.0,"next":"s2_2"},"s2_2":{"sched":2,"stage":2,"slots":{"morning":[["diazepam",18.0]],"night":[["diazepam",18.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":36.0,"printed_eq":36.0,"next":"s2_3"},"s2_3":{"sched":2,"stage":3,"slots":{"morning":[["diazepam",16.0]],"night":[["diazepam",18.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":34.0,"printed_eq":34.0,"next":"s2_4"},"s2_4":{"sched":2,"stage":4,"slots":{"morning":[["diazepam",16.0]],"night":[["diazepam",16.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":32.0,"printed_eq":32.0,"next":"s2_5"},"s2_5":{"sched":2,"stage":5,"slots":{"morning":[["diazepam",14.0]],"night":[["diazepam",16.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":30.0,"printed_eq":30.0,"next":"s2_6"},"s2_6":{"sched":2,"stage":6,"slots":{"morning":[["diazepam",14.0]],"night":[["diazepam",14.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":28.0,"printed_eq":28.0,"next":"s2_7"},"s2_7":{"sched":2,"stage":7,"slots":{"morning":[["diazepam",12.0]],"night":[["diazepam",14.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":26.0,"printed_eq":26.0,"next":"s2_8"},"s2_8":{"sched":2,"stage":8,"slots":{"morning":[["diazepam",12.0]],"night":[["diazepam",12.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":24.0,"printed_eq":24.0,"next":"s2_9"},"s2_9":{"sched":2,"stage":9,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",12.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.0,"printed_eq":22.0,"next":"s2_10"},"s2_10":{"sched":2,"stage":10,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s2_11"},"s2_11":{"sched":2,"stage":11,"slots":{"morning":[["diazepam",8.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":18.0,"printed_eq":18.0,"next":"s2_12"},"s2_12":{"sched":2,"stage":12,"slots":{"morning":[["diazepam",8.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":16.0,"printed_eq":16.0,"next":"s2_13"},"s2_13":{"sched":2,"stage":13,"slots":{"morning":[["diazepam",6.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":14.0,"printed_eq":14.0,"next":"s2_14"},"s2_14":{"sched":2,"stage":14,"slots":{"morning":[["diazepam",5.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":13.0,"printed_eq":13.0,"next":"s2_15"},"s2_15":{"sched":2,"stage":15,"slots":{"morning":[["diazepam",4.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":12.0,"printed_eq":12.0,"next":"s2_16"},"s2_16":{"sched":2,"stage":16,"slots":{"morning":[["diazepam",3.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":11.0,"printed_eq":11.0,"next":"s2_17"},"s2_17":{"sched":2,"stage":17,"slots":{"morning":[["diazepam",2.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":10.0,"printed_eq":10.0,"next":"s2_18"},"s2_18":{"sched":2,"stage":18,"slots":{"morning":[["diazepam",1.0]],"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":9.0,"printed_eq":9.0,"next":"s2_19"},"s2_19":{"sched":2,"stage":19,"slots":{"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":8.0,"printed_eq":8.0,"next":"s2_20"},"s2_20":{"sched":2,"stage":20,"slots":{"night":[["diazepam",7.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":7.0,"printed_eq":7.0,"next":"s2_21"},"s2_21":{"sched":2,"stage":21,"slots":{"night":[["diazepam",6.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":6.0,"printed_eq":6.0,"next":"s2_22"},"s2_22":{"sched":2,"stage":22,"slots":{"night":[["diazepam",5.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":5.0,"printed_eq":5.0,"next":"s2_23"},"s2_23":{"sched":2,"stage":23,"slots":{"night":[["diazepam",4.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":4.0,"printed_eq":4.0,"next":"s2_24"},"s2_24":{"sched":2,"stage":24,"slots":{"night":[["diazepam",3.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":3.0,"printed_eq":3.0,"next":"s2_25"},"s2_25":{"sched":2,"stage":25,"slots":{"night":[["diazepam",2.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":2.0,"printed_eq":2.0,"next":"s2_26"},"s2_26":{"sched":2,"stage":26,"slots":{"night":[["diazepam",1.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":1.0,"printed_eq":1.0,"next":null},"s3_start":{"sched":3,"stage":"start","slots":{"morning":[["lorazepam",2.0]],"midday":[["lorazepam",2.0]],"night":[["lorazepam",2.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s3_1"},"s3_1":{"sched":3,"stage":1,"slots":{"morning":[["lorazepam",2.0]],"midday":[["lorazepam",2.0]],"night":[["lorazepam",1.0],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s3_2"},"s3_2":{"sched":3,"stage":2,"slots":{"morning":[["lorazepam",1.5],["diazepam",5.0]],"midday":[["lorazepam",2.0]],"night":[["lorazepam",1.0],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s3_3"},"s3_3":{"sched":3,"stage":3,"slots":{"morning":[["lorazepam",1.5],["diazepam",5.0]],"midday":[["lorazepam",2.0]],"night":[["lorazepam",0.5],["diazepam",15.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s3_4"},"s3_4":{"sched":3,"stage":4,"slots":{"morning":[["lorazepam",1.5],["diazepam",5.0]],"midday":[["lorazepam",1.5],["diazepam",5.0]],"night":[["lorazepam",0.5],["diazepam",15.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s3_5"},"s3_5":{"sched":3,"stage":5,"slots":{"morning":[["lorazepam",1.5],["diazepam",5.0]],"midday":[["lorazepam",1.5],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":60.0,"printed_eq":60.0,"next":"s3_6"},"s3_6":{"sched":3,"stage":6,"slots":{"morning":[["lorazepam",1.0],["diazepam",5.0]],"midday":[["lorazepam",1.5],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":55.0,"printed_eq":55.0,"next":"s3_7"},"s3_7":{"sched":3,"stage":7,"slots":{"morning":[["lorazepam",1.0],["diazepam",5.0]],"midday":[["lorazepam",1.0],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":50.0,"printed_eq":50.0,"next":"s3_8"},"s3_8":{"sched":3,"stage":8,"slots":{"morning":[["lorazepam",0.5],["diazepam",5.0]],"midday":[["lorazepam",1.0],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":45.0,"printed_eq":45.0,"next":"s3_9"},"s3_9":{"sched":3,"stage":9,"slots":{"morning":[["lorazepam",0.5],["diazepam",5.0]],"midday":[["lorazepam",0.5],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":40.0,"printed_eq":40.0,"next":"s3_10"},"s3_10":{"sched":3,"stage":10,"slots":{"morning":[["diazepam",5.0]],"midday":[["lorazepam",0.5],["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":35.0,"printed_eq":35.0,"next":"s3_11"},"s3_11":{"sched":3,"stage":11,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":30.0,"printed_eq":30.0,"next":"s3_12"},"s3_12":{"sched":3,"stage":12,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",18.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":28.0,"printed_eq":28.0,"next":"s3_13"},"s3_13":{"sched":3,"stage":13,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",16.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":26.0,"printed_eq":26.0,"next":"s3_14"},"s3_14":{"sched":3,"stage":14,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",14.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":24.0,"printed_eq":24.0,"next":"s3_15"},"s3_15":{"sched":3,"stage":15,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",12.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.0,"printed_eq":22.0,"next":"s3_16"},"s3_16":{"sched":3,"stage":16,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s3_17"},"s3_17":{"sched":3,"stage":17,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":19.0,"printed_eq":19.0,"next":"s3_18"},"s3_18":{"sched":3,"stage":18,"slots":{"morning":[["diazepam",4.0]],"midday":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":18.0,"printed_eq":18.0,"next":"s3_19"},"s3_19":{"sched":3,"stage":19,"slots":{"morning":[["diazepam",4.0]],"midday":[["diazepam",3.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":17.0,"printed_eq":17.0,"next":"s3_20"},"s3_20":{"sched":3,"stage":20,"slots":{"morning":[["diazepam",3.0]],"midday":[["diazepam",3.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":16.0,"printed_eq":16.0,"next":"s3_21"},"s3_21":{"sched":3,"stage":21,"slots":{"morning":[["diazepam",3.0]],"midday":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":15.0,"printed_eq":15.0,"next":"s3_22"},"s3_22":{"sched":3,"stage":22,"slots":{"morning":[["diazepam",2.0]],"midday":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":14.0,"printed_eq":14.0,"next":"s3_23"},"s3_23":{"sched":3,"stage":23,"slots":{"morning":[["diazepam",2.0]],"midday":[["diazepam",1.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":13.0,"printed_eq":13.0,"next":"s3_24"},"s3_24":{"sched":3,"stage":24,"slots":{"morning":[["diazepam",1.0]],"midday":[["diazepam",1.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":12.0,"printed_eq":12.0,"next":"s3_25"},"s3_25":{"sched":3,"stage":25,"slots":{"morning":[["diazepam",1.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":11.0,"printed_eq":11.0,"next":"s3_26"},"s3_26":{"sched":3,"stage":26,"slots":{"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":10.0,"printed_eq":10.0,"next":"s3_27"},"s3_27":{"sched":3,"stage":27,"slots":{"night":[["diazepam",9.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":9.0,"printed_eq":9.0,"next":"s3_28"},"s3_28":{"sched":3,"stage":28,"slots":{"night":[["diazepam",8.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":8.0,"printed_eq":8.0,"next":"s3_29"},"s3_29":{"sched":3,"stage":29,"slots":{"night":[["diazepam",7.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":7.0,"printed_eq":7.0,"next":"s3_30"},"s3_30":{"sched":3,"stage":30,"slots":{"night":[["diazepam",6.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":6.0,"printed_eq":6.0,"next":"s3_31"},"s3_31":{"sched":3,"stage":31,"slots":{"night":[["diazepam",5.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":5.0,"printed_eq":5.0,"next":"s3_32"},"s3_32":{"sched":3,"stage":32,"slots":{"night":[["diazepam",4.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":4.0,"printed_eq":4.0,"next":"s3_33"},"s3_33":{"sched":3,"stage":33,"slots":{"night":[["diazepam",3.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":3.0,"printed_eq":3.0,"next":"s3_34"},"s3_34":{"sched":3,"stage":34,"slots":{"night":[["diazepam",2.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":2.0,"printed_eq":2.0,"next":"s3_35"},"s3_35":{"sched":3,"stage":35,"slots":{"night":[["diazepam",1.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":1.0,"printed_eq":1.0,"next":null},"s5_start":{"sched":5,"stage":"start","slots":{"morning":[["clonazepam",0.5]],"midday":[["clonazepam",0.5]],"night":[["clonazepam",0.5]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_1"},"s5_1":{"sched":5,"stage":1,"slots":{"morning":[["clonazepam",0.5]],"midday":[["clonazepam",0.5]],"night":[["clonazepam",0.25],["diazepam",5.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_2"},"s5_2":{"sched":5,"stage":2,"slots":{"morning":[["clonazepam",0.5]],"midday":[["clonazepam",0.5]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_3"},"s5_3":{"sched":5,"stage":3,"slots":{"morning":[["clonazepam",0.25],["diazepam",5.0]],"midday":[["clonazepam",0.5]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_4"},"s5_4":{"sched":5,"stage":4,"slots":{"morning":[["clonazepam",0.25],["diazepam",5.0]],"midday":[["clonazepam",0.25],["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_5"},"s5_5":{"sched":5,"stage":5,"slots":{"morning":[["diazepam",10.0]],"midday":[["clonazepam",0.25],["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s5_6"},"s5_6":{"sched":5,"stage":6,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",8.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":28.0,"printed_eq":28.0,"next":"s5_7"},"s5_7":{"sched":5,"stage":7,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",6.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":26.0,"printed_eq":26.0,"next":"s5_8"},"s5_8":{"sched":5,"stage":8,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":24.0,"printed_eq":24.0,"next":"s5_9"},"s5_9":{"sched":5,"stage":9,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.0,"printed_eq":22.0,"next":"s5_10"},"s5_10":{"sched":5,"stage":10,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s5_11"},"s5_11":{"sched":5,"stage":11,"slots":{"morning":[["diazepam",8.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":18.0,"printed_eq":18.0,"next":"s5_12"},"s5_12":{"sched":5,"stage":12,"slots":{"morning":[["diazepam",6.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":16.0,"printed_eq":16.0,"next":"s5_13"},"s5_13":{"sched":5,"stage":13,"slots":{"morning":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":14.0,"printed_eq":14.0,"next":"s5_14"},"s5_14":{"sched":5,"stage":14,"slots":{"morning":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":12.0,"printed_eq":12.0,"next":"s5_15"},"s5_15":{"sched":5,"stage":15,"slots":{"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":10.0,"printed_eq":10.0,"next":"s3_26","chains_to":"s3_26"},"s6_start":{"sched":6,"stage":"start","slots":{"morning":[["clonazepam",1.0]],"midday":[["clonazepam",1.0]],"night":[["clonazepam",1.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":60.0,"printed_eq":60.0,"next":"s6_1"},"s6_1":{"sched":6,"stage":1,"slots":{"morning":[["clonazepam",1.0]],"midday":[["clonazepam",1.0]],"night":[["clonazepam",0.5],["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":60.0,"printed_eq":60.0,"next":"s6_2"},"s6_2":{"sched":6,"stage":2,"slots":{"morning":[["clonazepam",0.5],["diazepam",10.0]],"midday":[["clonazepam",1.0]],"night":[["clonazepam",0.5],["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":60.0,"printed_eq":60.0,"next":"s6_3"},"s6_3":{"sched":6,"stage":3,"slots":{"morning":[["clonazepam",0.5],["diazepam",10.0]],"midday":[["clonazepam",0.5],["diazepam",5.0]],"night":[["clonazepam",0.5],["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":55.0,"printed_eq":55.0,"next":"s6_4"},"s6_4":{"sched":6,"stage":4,"slots":{"morning":[["clonazepam",0.5],["diazepam",10.0]],"midday":[["clonazepam",0.5],["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":50.0,"printed_eq":50.0,"next":"s6_5"},"s6_5":{"sched":6,"stage":5,"slots":{"morning":[["clonazepam",0.25],["diazepam",10.0]],"midday":[["clonazepam",0.5],["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":45.0,"printed_eq":45.0,"next":"s6_6"},"s6_6":{"sched":6,"stage":6,"slots":{"morning":[["clonazepam",0.25],["diazepam",10.0]],"midday":[["clonazepam",0.25],["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":40.0,"printed_eq":40.0,"next":"s6_7"},"s6_7":{"sched":6,"stage":7,"slots":{"morning":[["diazepam",10.0]],"midday":[["clonazepam",0.25],["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":35.0,"printed_eq":35.0,"next":"s6_8"},"s6_8":{"sched":6,"stage":8,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":30.0,"printed_eq":30.0,"next":"s6_9"},"s6_9":{"sched":6,"stage":9,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",2.5]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":27.5,"printed_eq":27.5,"next":"s6_10"},"s6_10":{"sched":6,"stage":10,"slots":{"morning":[["diazepam",12.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":27.0,"printed_eq":27.0,"next":"s6_11"},"s6_11":{"sched":6,"stage":11,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":25.0,"printed_eq":25.0,"next":"s6_12"},"s6_12":{"sched":6,"stage":12,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",14.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":24.0,"printed_eq":24.0,"next":"s6_13"},"s6_13":{"sched":6,"stage":13,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",12.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.0,"printed_eq":22.0,"next":"s6_14"},"s6_14":{"sched":6,"stage":14,"slots":{"morning":[["diazepam",10.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s5_10","chains_to":"s5_10"},"s7_start":{"sched":7,"stage":"start","slots":{"morning":[["alprazolam",1.0]],"midday":[["alprazolam",1.0]],"afternoon":[["alprazolam",1.0]],"night":[["alprazolam",1.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_1"},"s7_1":{"sched":7,"stage":1,"slots":{"morning":[["alprazolam",1.0]],"midday":[["alprazolam",1.0]],"afternoon":[["alprazolam",1.0]],"night":[["alprazolam",0.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_2"},"s7_2":{"sched":7,"stage":2,"slots":{"morning":[["alprazolam",1.0]],"midday":[["alprazolam",0.5],["diazepam",10.0]],"afternoon":[["alprazolam",1.0]],"night":[["alprazolam",0.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_3"},"s7_3":{"sched":7,"stage":3,"slots":{"morning":[["alprazolam",0.5],["diazepam",10.0]],"midday":[["alprazolam",0.5],["diazepam",10.0]],"afternoon":[["alprazolam",1.0]],"night":[["alprazolam",0.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_4"},"s7_4":{"sched":7,"stage":4,"slots":{"morning":[["alprazolam",0.5],["diazepam",10.0]],"midday":[["alprazolam",0.5],["diazepam",10.0]],"afternoon":[["alprazolam",0.5],["diazepam",10.0]],"night":[["alprazolam",0.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_5"},"s7_5":{"sched":7,"stage":5,"slots":{"morning":[["alprazolam",0.5],["diazepam",10.0]],"midday":[["alprazolam",0.5],["diazepam",10.0]],"afternoon":[["alprazolam",0.5],["diazepam",10.0]],"night":[["alprazolam",0.5],["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":80.0,"printed_eq":80.0,"next":"s7_6"},"s7_6":{"sched":7,"stage":6,"slots":{"morning":[["alprazolam",0.5],["diazepam",10.0]],"midday":[["alprazolam",0.25],["diazepam",10.0]],"afternoon":[["alprazolam",0.5],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":75.0,"printed_eq":75.0,"next":"s7_7"},"s7_7":{"sched":7,"stage":7,"slots":{"morning":[["alprazolam",0.25],["diazepam",10.0]],"midday":[["alprazolam",0.25],["diazepam",10.0]],"afternoon":[["alprazolam",0.5],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":70.0,"printed_eq":70.0,"next":"s7_8"},"s7_8":{"sched":7,"stage":8,"slots":{"morning":[["alprazolam",0.25],["diazepam",10.0]],"midday":[["alprazolam",0.25],["diazepam",10.0]],"afternoon":[["alprazolam",0.25],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":65.0,"printed_eq":65.0,"next":"s7_9"},"s7_9":{"sched":7,"stage":9,"slots":{"morning":[["alprazolam",0.25],["diazepam",10.0]],"midday":[["diazepam",10.0]],"afternoon":[["alprazolam",0.25],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":60.0,"printed_eq":60.0,"next":"s7_10"},"s7_10":{"sched":7,"stage":10,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",10.0]],"afternoon":[["alprazolam",0.25],["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":55.0,"printed_eq":55.0,"next":"s7_11"},"s7_11":{"sched":7,"stage":11,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",10.0]],"afternoon":[["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":50.0,"printed_eq":50.0,"next":"s7_12"},"s7_12":{"sched":7,"stage":12,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":45.0,"printed_eq":45.0,"next":"s7_13"},"s7_13":{"sched":7,"stage":13,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",10.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":40.0,"printed_eq":40.0,"next":"s7_14"},"s7_14":{"sched":7,"stage":14,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",20.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":35.0,"printed_eq":35.0,"next":"s7_15"},"s7_15":{"sched":7,"stage":15,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",15.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":30.0,"printed_eq":30.0,"next":"s7_16"},"s7_16":{"sched":7,"stage":16,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",12.5]]},"weeks_default":2,"weeks_range":[1,2],"eq":27.5,"printed_eq":27.5,"next":"s7_17"},"s7_17":{"sched":7,"stage":17,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",5.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":25.0,"printed_eq":25.0,"next":"s7_18"},"s7_18":{"sched":7,"stage":18,"slots":{"morning":[["diazepam",5.0]],"midday":[["diazepam",2.5]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.5,"printed_eq":22.5,"next":"s7_19"},"s7_19":{"sched":7,"stage":19,"slots":{"morning":[["diazepam",5.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s7_20"},"s7_20":{"sched":7,"stage":20,"slots":{"morning":[["diazepam",4.0]],"afternoon":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":19.0,"printed_eq":19.0,"next":"s7_21"},"s7_21":{"sched":7,"stage":21,"slots":{"morning":[["diazepam",4.0]],"afternoon":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":18.0,"printed_eq":18.0,"next":"s7_22"},"s7_22":{"sched":7,"stage":22,"slots":{"morning":[["diazepam",4.0]],"afternoon":[["diazepam",3.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":17.0,"printed_eq":17.0,"next":"s7_23"},"s7_23":{"sched":7,"stage":23,"slots":{"morning":[["diazepam",3.0]],"afternoon":[["diazepam",3.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":16.0,"printed_eq":16.0,"next":"s7_24"},"s7_24":{"sched":7,"stage":24,"slots":{"morning":[["diazepam",3.0]],"afternoon":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":15.0,"printed_eq":15.0,"next":"s7_25"},"s7_25":{"sched":7,"stage":25,"slots":{"morning":[["diazepam",2.0]],"afternoon":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":14.0,"printed_eq":14.0,"next":"s7_26"},"s7_26":{"sched":7,"stage":26,"slots":{"morning":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":12.0,"printed_eq":12.0,"next":"s7_27"},"s7_27":{"sched":7,"stage":27,"slots":{"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":10.0,"printed_eq":10.0,"next":"s3_26","chains_to":"s3_26"},"s8_start":{"sched":8,"stage":"start","slots":{"morning":[["lorazepam",1.0]],"midday":[["lorazepam",1.0]],"night":[["lorazepam",1.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_1"},"s8_1":{"sched":8,"stage":1,"slots":{"morning":[["lorazepam",1.0]],"midday":[["lorazepam",1.0]],"night":[["lorazepam",0.5],["diazepam",5.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_2"},"s8_2":{"sched":8,"stage":2,"slots":{"morning":[["lorazepam",0.5],["diazepam",5.0]],"midday":[["lorazepam",1.0]],"night":[["lorazepam",0.5],["diazepam",5.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_3"},"s8_3":{"sched":8,"stage":3,"slots":{"morning":[["lorazepam",0.5],["diazepam",5.0]],"midday":[["lorazepam",0.5],["diazepam",5.0]],"night":[["lorazepam",0.5],["diazepam",5.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_4"},"s8_4":{"sched":8,"stage":4,"slots":{"morning":[["lorazepam",0.5],["diazepam",5.0]],"midday":[["lorazepam",0.5],["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_5"},"s8_5":{"sched":8,"stage":5,"slots":{"morning":[["diazepam",10.0]],"midday":[["lorazepam",0.5],["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_6"},"s8_6":{"sched":8,"stage":6,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",10.0]],"night":[["diazepam",10.0]]},"weeks_default":1,"weeks_range":[1,1],"eq":30.0,"printed_eq":30.0,"next":"s8_7"},"s8_7":{"sched":8,"stage":7,"slots":{"morning":[["diazepam",10.0]],"midday":[["diazepam",8.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":28.0,"printed_eq":28.0,"next":"s8_8"},"s8_8":{"sched":8,"stage":8,"slots":{"morning":[["diazepam",8.0]],"midday":[["diazepam",8.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":26.0,"printed_eq":26.0,"next":"s8_9"},"s8_9":{"sched":8,"stage":9,"slots":{"morning":[["diazepam",8.0]],"midday":[["diazepam",6.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":24.0,"printed_eq":24.0,"next":"s8_10"},"s8_10":{"sched":8,"stage":10,"slots":{"morning":[["diazepam",6.0]],"midday":[["diazepam",6.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":22.0,"printed_eq":22.0,"next":"s8_11"},"s8_11":{"sched":8,"stage":11,"slots":{"morning":[["diazepam",6.0]],"midday":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":20.0,"printed_eq":20.0,"next":"s8_12"},"s8_12":{"sched":8,"stage":12,"slots":{"morning":[["diazepam",6.0]],"midday":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":18.0,"printed_eq":18.0,"next":"s8_13"},"s8_13":{"sched":8,"stage":13,"slots":{"morning":[["diazepam",6.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":16.0,"printed_eq":16.0,"next":"s8_14"},"s8_14":{"sched":8,"stage":14,"slots":{"morning":[["diazepam",5.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":15.0,"printed_eq":15.0,"next":"s8_15"},"s8_15":{"sched":8,"stage":15,"slots":{"morning":[["diazepam",4.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":14.0,"printed_eq":14.0,"next":"s8_16"},"s8_16":{"sched":8,"stage":16,"slots":{"morning":[["diazepam",3.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":13.0,"printed_eq":13.0,"next":"s8_17"},"s8_17":{"sched":8,"stage":17,"slots":{"morning":[["diazepam",2.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":12.0,"printed_eq":12.0,"next":"s8_18"},"s8_18":{"sched":8,"stage":18,"slots":{"morning":[["diazepam",1.0]],"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":11.0,"printed_eq":11.0,"next":"s8_19"},"s8_19":{"sched":8,"stage":19,"slots":{"night":[["diazepam",10.0]]},"weeks_default":2,"weeks_range":[1,2],"eq":10.0,"printed_eq":10.0,"next":"s3_26","chains_to":"s3_26"}},"order":{"1":["s1_start","s1_1","s1_2","s1_3","s1_4","s1_5","s1_6","s1_7","s1_8","s1_9","s1_10","s1_11","s1_12","s1_13","s1_14"],"2":["s2_start","s2_1","s2_2","s2_3","s2_4","s2_5","s2_6","s2_7","s2_8","s2_9","s2_10","s2_11","s2_12","s2_13","s2_14","s2_15","s2_16","s2_17","s2_18","s2_19","s2_20","s2_21","s2_22","s2_23","s2_24","s2_25","s2_26"],"3":["s3_start","s3_1","s3_2","s3_3","s3_4","s3_5","s3_6","s3_7","s3_8","s3_9","s3_10","s3_11","s3_12","s3_13","s3_14","s3_15","s3_16","s3_17","s3_18","s3_19","s3_20","s3_21","s3_22","s3_23","s3_24","s3_25","s3_26","s3_27","s3_28","s3_29","s3_30","s3_31","s3_32","s3_33","s3_34","s3_35"],"5":["s5_start","s5_1","s5_2","s5_3","s5_4","s5_5","s5_6","s5_7","s5_8","s5_9","s5_10","s5_11","s5_12","s5_13","s5_14","s5_15"],"6":["s6_start","s6_1","s6_2","s6_3","s6_4","s6_5","s6_6","s6_7","s6_8","s6_9","s6_10","s6_11","s6_12","s6_13","s6_14"],"7":["s7_start","s7_1","s7_2","s7_3","s7_4","s7_5","s7_6","s7_7","s7_8","s7_9","s7_10","s7_11","s7_12","s7_13","s7_14","s7_15","s7_16","s7_17","s7_18","s7_19","s7_20","s7_21","s7_22","s7_23","s7_24","s7_25","s7_26","s7_27"],"8":["s8_start","s8_1","s8_2","s8_3","s8_4","s8_5","s8_6","s8_7","s8_8","s8_9","s8_10","s8_11","s8_12","s8_13","s8_14","s8_15","s8_16","s8_17","s8_18","s8_19"]},"eq":{"alprazolam":20.0,"lorazepam":10.0,"clonazepam":20.0,"diazepam":1.0}};</script>
+<script>/* UI layer */
+'use strict';
+const APP_VERSION = '1.0';
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c;
+  if (x !== undefined) n.textContent = x; return n; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MED_LABEL = { A:'Alprazolam', L:'Lorazepam', C:'Clonazepam', D:'Diazepam',
+  AD:'Alprazolam + Diazepam', LD:'Lorazepam + Diazepam', CD:'Clonazepam + Diazepam' };
+const FREQ_LABEL = { QD:'QD — once daily (morning)', QHS:'QHS — once daily at bedtime',
+  BID:'BID — twice daily', TID:'TID — three times daily', QID:'QID — four times daily' };
+const ORGANISER = {
+  QD: ['7-day pill organizer', '1-dose daily planner',
+       'These feature one single compartment for each day of the week.'],
+  QHS:['7-day pill organizer', '1-dose daily planner',
+       'These feature one single compartment for each day of the week.'],
+  BID:['AM/PM pill organizer', '2-times-a-day planner',
+       'These typically use two distinct colors, or clear sun and moon icons, to separate daytime and nighttime doses.'],
+  TID:['3-times-a-day pill organizer', null,
+       'These usually divide each day into morning, noon, and evening slots.'],
+  QID:['4-dose weekly planner', '4-times-a-day organizer',
+       'These include morning, noon, evening, and bedtime compartments.'],
+};
+
+const S = { medKey:null, freqs:{}, doses:{}, startDate:null, result:null, weeks:null, code:null,
+            // Dispensing is a QUERY over the schedule, not part of it. Deliberately not
+            // stored in the schedule code: the taper is identical however it is dispensed.
+            disp: { weeks:4, from:null, nextOnly:false } };
+
+/* ---------- date helpers ---------- */
+function parseDate(str){
+  const m = String(str||'').trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(!m) return null;
+  let [,mo,da,yr]=m; mo=+mo; da=+da; yr=+yr;
+  if(yr<100) yr += yr<70?2000:1900;
+  if(mo<1||mo>12||da<1||da>31) return null;
+  // The schedule code stores days since 2020-01-01 in 15 bits. Anything outside that
+  // range used to be silently clamped, issuing a schedule for a date it never printed.
+  if(yr<2020||yr>2109) return null;
+  const d=new Date(yr,mo-1,da);
+  return (d.getFullYear()===yr&&d.getMonth()===mo-1&&d.getDate()===da)?d:null;
+}
+const fmt = d => d ? `${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}` : '';
+const fmtLong = d => d ? d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : '';
+
+/* ---------- screens ---------- */
+function show(id){
+  ['scr-gate','scr-setup','scr-work','scr-out','scr-info'].forEach(s=>$(s).classList.add('hidden'));
+  $(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+/* ---------- setup ---------- */
+function buildMedOpts(){
+  const box=$('med-opts'); box.innerHTML='';
+  for(const k of CODEC.MED_KEYS){
+    const b=el('button','opt'+(S.medKey===k?' sel':''));
+    b.appendChild(el('b',null,MED_LABEL[k]));
+    b.appendChild(el('span',null,ENG.MED_OPTIONS[k].join(' + ')));
+    b.setAttribute('aria-pressed', S.medKey===k?'true':'false');
+    b.onclick=()=>{ S.medKey=k; S.freqs={}; S.doses={}; buildMedOpts(); buildFreq(); refresh(); };
+    box.appendChild(b);
+  }
+}
+function buildFreq(){
+  const p=$('freq-panel'), box=$('freq-rows');
+  if(!S.medKey){ p.classList.add('hidden'); return; }
+  p.classList.remove('hidden'); box.innerHTML='';
+  for(const d of ENG.MED_OPTIONS[S.medKey]){
+    const row=el('div','row'); row.style.margin='0 0 10px';
+    row.appendChild(el('label',null,d[0].toUpperCase()+d.slice(1)));
+    const sel=el('select');
+    sel.setAttribute('aria-label','How often is '+d+' taken?');
+    sel.appendChild(new Option('— choose —',''));
+    for(const f of CODEC.FREQ_KEYS) sel.appendChild(new Option(FREQ_LABEL[f],f));
+    sel.value=S.freqs[d]||'';
+    sel.onchange=()=>{ S.freqs[d]=sel.value; S.doses[d]={}; buildDoses(); refresh(); };
+    row.appendChild(sel); box.appendChild(row);
+  }
+  buildDoses();
+}
+function buildDoses(){
+  const p=$('dose-panel'), t=$('dose-table');
+  const drugs=S.medKey?ENG.MED_OPTIONS[S.medKey]:[];
+  if(!drugs.length||!drugs.every(d=>S.freqs[d])){ p.classList.add('hidden'); return; }
+  p.classList.remove('hidden'); t.innerHTML='';
+  const used=new Set(); drugs.forEach(d=>ENG.FREQ_SLOTS[S.freqs[d]].forEach(s=>used.add(s)));
+  const cols=ENG.SLOTS.filter(s=>used.has(s));
+  const hr=el('tr'); hr.appendChild(el('th',null,'Medication'));
+  cols.forEach(c=>hr.appendChild(el('th',null,ENG.SLOT_LABEL[c])));
+  t.appendChild(hr);
+  for(const d of drugs){
+    const tr=el('tr'); tr.appendChild(el('td',null,d[0].toUpperCase()+d.slice(1)));
+    for(const c of cols){
+      const td=el('td');
+      if(ENG.FREQ_SLOTS[S.freqs[d]].includes(c)){
+        const sel=el('select');
+        sel.setAttribute('aria-label',d+' dose, '+ENG.SLOT_LABEL[c]);
+        sel.appendChild(new Option('—',''));
+        for(const v of ENG.achievableDoses(d)) sel.appendChild(new Option(v+' mg',v));
+        if(S.doses[d]&&S.doses[d][c]!==undefined) sel.value=String(S.doses[d][c]);
+        sel.onchange=()=>{ S.doses[d]=S.doses[d]||{};
+          if(sel.value==='') delete S.doses[d][c]; else S.doses[d][c]=parseFloat(sel.value);
+          refresh(); };
+        td.appendChild(sel);
+      } else { td.style.background='#f7f8fa'; td.appendChild(el('span','small','—')); }
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+}
+function currentRegimen(){
+  const reg={};
+  if(!S.medKey) return reg;
+  for(const d of ENG.MED_OPTIONS[S.medKey]){
+    const per=S.doses[d]||{};
+    for(const s in per) if(per[s]>0){ reg[s]=reg[s]||[]; reg[s].push([d,per[s]]); }
+  }
+  return reg;
+}
+function inputsComplete(){
+  if(!S.medKey||!S.startDate) return false;
+  for(const d of ENG.MED_OPTIONS[S.medKey]){
+    if(!S.freqs[d]) return false;
+    for(const s of ENG.FREQ_SLOTS[S.freqs[d]])
+      if(!S.doses[d]||!(S.doses[d][s]>0)) return false;
+  }
+  return true;
+}
+function refresh(){
+  $('date-panel').classList.toggle('hidden', !($('dose-panel').classList.contains('hidden')===false));
+  const reg=currentRegimen(), eq=ENG.regimenEq(reg);
+  $('eq-readout').textContent = eq>0
+    ? `Total daily dose: ${eq}mg diazepam-equivalent.` + (eq>ENG.CEILING_EQ
+        ? `  Above the ${ENG.CEILING_EQ}mg published ceiling — this tool will decline.` : '')
+    : '';
+  $('eq-readout').style.color = eq>ENG.CEILING_EQ ? 'var(--danger)' : '';
+  $('date-echo').textContent = S.startDate ? fmtLong(S.startDate) : '';
+  $('btn-run').disabled = !inputsComplete();
+}
+
+/* ---------- run ---------- */
+function run(){
+  $('run-err').innerHTML='';
+  const reg=currentRegimen();
+  const res=ENG.generate(DATA,{regimen:reg});
+  if(res.error){ $('run-err').innerHTML=`<div class="err">${esc(res.error)}</div>`; return; }
+  S.result=res;
+  S.weeks = S.weeks && S.weeks.length===res.steps.length ? S.weeks : res.steps.map(s=>s.weeks_default);
+  applyWeeks(); renderWork(); show('scr-work');
+}
+function applyWeeks(){
+  if(!S.result||!S.result.steps) return;
+  S.result.steps.forEach((s,i)=>{ s.weeks = s.weeks_default===0 ? 0
+    : Math.max(1,Math.min(4, S.weeks[i]===undefined?s.weeks_default:S.weeks[i])); });
+  ENG.applyDates(S.result.steps, S.startDate);
+  S.dispensing = ENG.buildDispensing(S.result.steps, { weeks: S.disp.weeks, from: S.disp.from });
+  // The patient handout covers the entire schedule, so its tablet strengths must come
+  // from a full-schedule pass. Reading them from the filtered query made the handout
+  // name strengths that appear nowhere on the dispensing document printed beside it.
+  S.dispensingFull = ENG.buildDispensing(S.result.steps, { weeks: S.disp.weeks });
+}
+function weekDefaults(){ return S.result.steps.map(s=>s.weeks_default); }
+
+function renderWork(){
+  const st=S.result.steps;
+  const totalWeeks=st.reduce((a,s)=>a+(s.weeks||0),0);
+  const ash=st.filter(s=>s.provenance==='ashton').length;
+  const ext=st.filter(s=>s.provenance==='extrapolated').length;
+  const last=st[st.length-1];
+  $('work-summary').innerHTML =
+    `${st.length-2} dosing steps &middot; <strong>${totalWeeks} weeks</strong> ` +
+    `(${(totalWeeks/52).toFixed(1)} years) &middot; ends ${esc(fmtLong(last.start))} &middot; ` +
+    `${ash} published dose sequence${ash===1?'':'s'}, ${ext} generated` +
+    (st.filter(x=>durationNote(x)).length
+      ? ` &middot; <strong>${st.filter(x=>durationNote(x)).length} step(s) outside the published duration range</strong>`
+      : '');
+
+  const viol=(S.dispensing||[]).filter(p=>p.violation);
+  $('dispense-warn').innerHTML = viol.length
+    ? `<div class="err">${viol.length} dispensing period(s) would need more than two tablet
+       strengths of one drug. Lengthening those steps usually resolves it.</div>` : '';
+
+  const t=$('work-table'); t.innerHTML='';
+  const hr=el('tr');
+  ['#','Source','Morning','Midday','Afternoon','Night','Diazepam equiv.','Weeks','Dates']
+    .forEach(h=>hr.appendChild(el('th',null,h)));
+  t.appendChild(hr);
+  st.forEach((s,i)=>{
+    if(s.provenance==='end') return;
+    const tr=el('tr');
+    tr.appendChild(el('td',null,s.provenance==='current'?'—':String(i)));
+    const td1=el('td');
+    const tag=el('span','tag '+(s.provenance==='ashton'?'tag-ashton':s.provenance==='extrapolated'?'tag-extrap':'tag-current'),
+      s.provenance==='ashton'?'PUBLISHED':s.provenance==='extrapolated'?'GENERATED':'CURRENT');
+    td1.appendChild(tag);
+    const cite=citation(s);
+    if(cite) td1.appendChild(el('div','small',cite));
+    const dn=durationNote(s);
+    if(dn){ const n=el('div','small',dn); n.style.color='var(--extrap)'; td1.appendChild(n); }
+    if(s.note) td1.appendChild(el('div','small',s.note));
+    if(s.eq_erratum) td1.appendChild(el('div','small',`Manual prints ${s.eq_erratum}mg here; components sum to ${ENG.regimenEq(s.regimen)}mg.`));
+    tr.appendChild(td1);
+    for(const slot of ENG.SLOTS){
+      const doses=s.regimen[slot]||[];
+      tr.appendChild(el('td',null, doses.length?doses.map(([d,mg])=>`${d} ${mg}mg`).join(' + '):'—'));
+    }
+    tr.appendChild(el('td',null, ENG.regimenEq(s.regimen)+'mg'));
+    const td2=el('td');
+    if(s.weeks_default>0){
+      const inp=el('select','wk');
+      inp.setAttribute('aria-label','Weeks for step '+i+(s.source?', '+s.source:''));
+      [1,2,3,4].forEach(v=>inp.appendChild(new Option(v,v)));
+      inp.value=String(s.weeks);
+      inp.onchange=()=>{ S.weeks[i]=parseInt(inp.value,10); applyWeeks(); renderWork(); };
+      td2.appendChild(inp);
+      if(s.weeks!==s.weeks_default) td2.appendChild(el('div','small',`default ${s.weeks_default}`));
+    } else td2.appendChild(el('span','small','—'));
+    tr.appendChild(td2);
+    tr.appendChild(el('td',null, s.weeks>0?`${fmt(s.start)} – ${fmt(s.end)}`:fmt(s.start)));
+    t.appendChild(tr);
+  });
+}
+function shiftWeeks(delta){
+  const st=S.result.steps;
+  S.weeks=st.map((s,i)=> s.weeks_default===0?0:Math.max(1,Math.min(4,(S.weeks[i]||s.weeks_default)+delta)));
+  applyWeeks(); renderWork();
+}
+
+/* ---------- documents ---------- */
+function makeCode(){
+  try{
+  return CODEC.encode({ medKey:S.medKey, freqs:S.freqs, doses:S.doses, startDate:S.startDate,
+    weeks:S.weeks, weekDefaults:weekDefaults() }, ENG);
+  }catch(e){ return 'UNAVAILABLE'; }
+}
+function watermark(code){
+  const d=el('div','wm');
+  const big=el('div','big');
+  big.appendChild(el('span',null,'NOT A PRESCRIPTION\nPRESCRIBER REVIEW REQUIRED'));
+  d.appendChild(big);
+  d.appendChild(el('div','stamp-line',
+    `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
+    `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`));
+  return d;
+}
+function footer(code){
+  const f=el('div','docfoot');
+  f.innerHTML =
+    'Dose sequences are cited from Ashton, C.H., <em>Benzodiazepines: How They Work and How to '+
+    'Withdraw</em> (2002). <strong>This schedule was generated by this software and was not produced, '+
+    'reviewed, or endorsed by Professor Ashton, her estate, or the Benzodiazepine Information '+
+    'Coalition.</strong> Step durations are set by the prescriber and may differ from those published. '+
+    'Not reviewed by a clinician. For informational and research purposes only — not medical advice, '+
+    'not a prescription, and not a substitute for professional judgement. Verify every dose '+
+    'independently before use. Provided AS IS, without warranty of any kind; the author accepts no '+
+    'liability arising from its use. Do not start, stop, or change any medication except as directed '+
+    'by your prescriber.'+
+    `<div class="stamp">benzo-taper v${APP_VERSION} (engine v${ENG.ENGINE_VERSION}) &middot; `+
+    `Code ${esc(code)} (contains PHI) &middot; Generated ${esc(fmtLong(new Date()))}</div>`;
+  return f;
+}
+function page(code,cls){ return el('div','page'+(cls?' '+cls:'')); }
+
+function renderDocs(){
+  const code=S.code=makeCode();
+  const box=$('docs'); box.innerHTML='';
+  box.appendChild(handoutDoc(code));
+  box.appendChild(dispensingDoc(code));
+  box.appendChild(codeDoc(code));
+  $('stamp-line').textContent =
+    `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
+    `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`;
+  selectDoc(S._tab||'doc-hand');
+}
+function activeSteps(){ return S.result.steps.filter(s=>s.weeks>0&&Object.keys(s.regimen).length); }
+
+/* Provenance is expressed as a CITATION, not an endorsement badge. The dose sequence
+   is Ashton's; the schedule — entry point, path and durations — is this tool's and the
+   prescriber's. The distinction has to survive a duration edit. */
+function citation(s){
+  return s.provenance==='ashton' && s.source ? `${s.source} — Ashton 2002` : null;
+}
+function durationNote(s){
+  if(s.provenance!=='ashton'||!s.weeks_range) return null;
+  const [lo,hi]=s.weeks_range;
+  if(s.weeks>=lo && s.weeks<=hi) return null;      // within the published range
+  return `duration modified (published: ${lo===hi?lo:lo+'\u2013'+hi} week${hi>1?'s':''})`;
+}
+// The handout must describe the tablets the pharmacy actually dispensed, so each step
+// inherits the strength selection made for its dispensing period.
+function strengthsForStep(idx){
+  const per=(S.dispensingFull||[]).find(p=>p.steps.includes(idx));
+  return per?per.strengths:null;
+}
+
+function handoutDoc(code){
+  const p=page(code); p.id='doc-hand'; const c=el('div','hand');
+  const clinic=el('div','clinic');
+  clinic.innerHTML='<strong>If you have left from the schedule please reach out. '+
+    'Your doctor is here to help.</strong><br><br>Clinic Phone <span class="line"></span>';
+  c.appendChild(clinic);
+
+  c.appendChild(el('h2',null,'Your medication taper'));
+  c.appendChild(el('p',null,
+    'This plan slowly lowers your medication over time. Going slowly is what makes it work. '+
+    'Most people do best when each reduction is small and they stay at each step long enough '+
+    'to settle before the next one.'));
+  c.appendChild(el('p',null,
+    'Some symptoms during a taper are normal and usually pass. If a step feels too hard, that is '+
+    'not a failure — it usually means staying at that step longer, not going back up. '+
+    'Do not change your dose on your own. Talk to your doctor first.'));
+  c.appendChild(el('p',null,
+    'Never stop a benzodiazepine suddenly. Stopping abruptly can be dangerous.'));
+
+  const f=S.freqs[ENG.MED_OPTIONS[S.medKey][0]];
+  const org=ORGANISER[f]||ORGANISER.TID;
+  c.appendChild(el('h3',null,'Getting a pill organizer'));
+  c.appendChild(el('p',null,
+    'A weekly pill organizer makes this much easier and much safer. You are taking your medicine '+
+    (f==='QD'||f==='QHS'?'once':f==='BID'?'twice':f==='TID'?'three times':'four times')+
+    ' a day, so look for:'));
+  const ul=el('ul');
+  const li=el('li');
+  li.innerHTML = `Search for a <strong>"${esc(org[0])}"</strong>` +
+    (org[1]?` or <strong>"${esc(org[1])}"</strong>`:'') + `. ${esc(org[2])}`;
+  ul.appendChild(li);
+  c.appendChild(ul);
+
+  c.appendChild(el('h3',null,'Filling your organizer each week'));
+  const ol=el('ol');
+  [ 'Find the row in the table below whose date range includes the coming week.',
+    'That row tells you exactly what to take, and at what times of day.',
+    'Fill the whole week at once, on the same day each week — Sunday works well for most people.',
+    'Check the dates before you fill. Some weeks the dose changes, and it is easy to fill from the wrong row.',
+    'If a tablet needs to be halved, use a pill cutter from any pharmacy. Ask your pharmacist to show you.',
+    'Keep the rest of the medicine in its original bottle, out of reach of children and pets.'
+  ].forEach(x=>ol.appendChild(el('li',null,x)));
+  c.appendChild(ol);
+
+  c.appendChild(el('h3',null,'Reminder apps'));
+  c.appendChild(el('p',null,
+    'A phone reminder helps a lot, especially on days the dose changes. In your phone\'s app store, '+
+    'search for "medication reminder", "pill reminder", or "medisafe". Set one alarm for each time '+
+    'of day you take a dose. Your phone\'s built-in Clock or Reminders app works fine too.'));
+
+  c.appendChild(el('h2',null,'Your schedule'));
+  c.appendChild(el('p','small','Take the medicines listed for each date range. Do not skip ahead.'));
+  const steps=activeSteps();
+  const usedSlots=ENG.SLOTS.filter(sl=>steps.some(s=>(s.regimen[sl]||[]).length));
+  const t=el('table');
+  const hr=el('tr');
+  ['Dates','How long'].concat(usedSlots.map(sl=>ENG.SLOT_LABEL[sl])).forEach(h=>hr.appendChild(el('th',null,h)));
+  t.appendChild(hr);
+  steps.forEach(s=>{
+    const tr=el('tr');
+    tr.appendChild(el('td',null,`${fmt(s.start)} – ${fmt(s.end)}`));
+    tr.appendChild(el('td',null,`${s.weeks} week${s.weeks>1?'s':''}`));
+    const st=strengthsForStep(S.result.steps.indexOf(s));
+    usedSlots.forEach(sl=>tr.appendChild(el('td',null,ENG.slotDoseText(s.regimen,sl,st))));
+    t.appendChild(tr);
+  });
+  const trEnd=el('tr');
+  const lastActive=steps.slice(-1)[0];
+  trEnd.appendChild(el('td',null, lastActive?fmt(new Date(lastActive.end.getTime()+86400000)):''));
+  trEnd.appendChild(el('td',null,'—'));
+  const tdEnd=el('td',null,'Finished. No further doses.');
+  tdEnd.colSpan=usedSlots.length; trEnd.appendChild(tdEnd);
+  t.appendChild(trEnd);
+  c.appendChild(t);
+  c.appendChild(el('p','small','\u00bd means half a tablet. Use a pill cutter.'));
+
+  p.appendChild(c); p.appendChild(footer(code)); return p;
+}
+
+function dispensingDoc(code){
+  const p=page(code); p.id='doc-disp';
+  p.appendChild(el('h2',null,'Dispensing breakdown'));
+
+  const w=S.disp.weeks;
+  const lead=el('p','small');
+  lead.innerHTML=`Quantities are grouped into <strong>${w}-week fills</strong>`+
+    (S.disp.from?` starting ${esc(fmt(S.disp.from))}`:'')+
+    `. A fill usually spans more than one step, so quantities are totalled across the ` +
+    `whole fill rather than per step. No fill requires more than two tablet strengths of any one drug.`;
+  p.appendChild(lead);
+
+  const allPeriods=(S.dispensing||[]).slice();
+  const allGroups=allPeriods.length?ENG.groupIntoPrescriptions(allPeriods):[];
+  let periods=allPeriods.slice();
+  if(S.disp.nextOnly && periods.length){
+    periods=periods.slice(0,1);
+    const note=el('p','small');
+    note.innerHTML=`<strong>Showing the next fill only.</strong> The remaining schedule needs `+
+      `${allPeriods.length} fill${allPeriods.length===1?'':'s'} across ${allGroups.length} `+
+      `prescription${allGroups.length===1?'':'s'} in total.`;
+    p.appendChild(note);
+  }
+  if(!periods.length){ p.appendChild(el('p',null,'No fills in the selected range.'));
+    p.appendChild(footer(code)); return p; }
+
+  // Group over the full list so the refill counts are true, then show only what was asked for.
+  const shown=new Set(periods);
+  const groups=allGroups.map(g=>({...g,periods:g.periods.filter(x=>shown.has(x))}))
+                        .filter(g=>g.periods.length);
+  groups.forEach(g=>{
+    const box=el('div'); box.style.margin='22px 0';
+    const h=el('h3',null,`Prescription ${g.rx} \u2014 written ${fmt(g.written)}`);
+    box.appendChild(h);
+    const meta=el('p','small');
+    const full=allGroups.find(x=>x.rx===g.rx)||g;
+    meta.textContent=`${full.periods.length} fill${full.periods.length>1?'s':''} `+
+      `(initial fill plus ${full.refills} refill${full.refills===1?'':'s'}, ${full.refillDays} days of refills)`+
+      (g.periods.length<full.periods.length?`, of which ${g.periods.length} shown here`:'')+`. `+
+      (full.endedBecause?`A new prescription is required after this one: ${full.endedBecause}.`
+                     :'This prescription covers the remainder of the schedule.');
+    box.appendChild(meta);
+
+    // collapse runs of identical fills so repeated scripts read as repeats, not as a bug
+    const key=per=>per.lines.map(l=>l.drug+l.strength+'x'+l.qty).join('|');
+    const runs=[];
+    g.periods.forEach(per=>{
+      const last=runs[runs.length-1];
+      if(last && key(last.periods[0])===key(per)) last.periods.push(per);
+      else runs.push({periods:[per]});
+    });
+
+    runs.forEach(run=>{
+      const first=run.periods[0], n=run.periods.length;
+      const blk=el('div','keep'); blk.style.margin='12px 0';
+      const title=n>1
+        ? `Fills ${first.n}\u2013${run.periods[n-1].n} \u2014 ${n} identical fills, `+
+          `${fmt(first.start)} to ${fmt(run.periods[n-1].end)}`
+        : `Fill ${first.n} \u2014 ${fmt(first.start)} to ${fmt(first.end)} (${first.days} days)`;
+      blk.appendChild(el('h4',null,title));
+      if(n>1) blk.appendChild(el('p','small',
+        `The dose does not change across these ${n} fills. Dispense the quantity below `+
+        `${n} times, once per fill.`));
+      const t=el('table');
+      const hr=el('tr'); ['Medication','Strength','Quantity per fill'].forEach(x=>hr.appendChild(el('th',null,x)));
+      t.appendChild(hr);
+      first.lines.forEach(l=>{
+        const tr=el('tr');
+        tr.appendChild(el('td',null,l.drug));
+        tr.appendChild(el('td',null,l.strength+' mg'));
+        tr.appendChild(el('td',null,l.qty+' tablets'));
+        t.appendChild(tr);
+      });
+      blk.appendChild(t);
+      if(first.violation) blk.appendChild(el('p','small','\u26a0 Requires more than two strengths of one drug.'));
+
+      const ins=el('div'); ins.style.marginTop='8px';
+      ins.appendChild(el('div','small','Patient instructions during this fill:'));
+      const ul=el('ul'); ul.style.fontSize='14px';
+      first.steps.forEach(idx=>{
+        const s=S.result.steps[idx]; if(!s||!s.weeks) return;
+        const cite=citation(s), dn=durationNote(s);
+        const li=el('li');
+        li.innerHTML=`<strong>${esc(fmt(s.start))} \u2013 ${esc(fmt(s.end))}:</strong> `+
+          `${esc(ENG.instructionFor(s.regimen,first.strengths))}`+
+          (cite?` <span style="color:#5b6672">[${esc(cite)}${dn?'; '+esc(dn):''}]</span>`:'');
+        ul.appendChild(li);
+      });
+      ins.appendChild(ul); blk.appendChild(ins);
+      box.appendChild(blk);
+    });
+    p.appendChild(box);
+  });
+
+  p.appendChild(el('p','small',
+    'Prescription grouping applies California Schedule IV limits: at most five refills, '+
+    'refills capped at 120 days combined, and expiry six months after the date written. '+
+    'Whichever limit binds first ends the prescription. Verify against current state rules.'));
+  p.appendChild(footer(code)); return p;
+}
+
+function codeDoc(code){
+  const p=page(code); p.id='doc-code';
+  p.appendChild(el('h2',null,'Schedule code'));
+  p.appendChild(el('p',null,
+    'This code regenerates this exact schedule. Enter it in the "Enter schedule code here" box on '+
+    'the first screen to return to it, adjust it, or reprint it.'));
+  const cb=el('div','codebox',code); p.appendChild(cb);
+  const ph=el('p'); ph.style.marginTop='14px';
+  ph.innerHTML='<span class="phi">CONTAINS PHI</span> &nbsp;This code encodes the patient\'s dosing '+
+    'and taper dates. Handle it with the same care as any other identifiable clinical information. '+
+    'Do not post it publicly or send it over unsecured channels.';
+  p.appendChild(ph);
+  const ul=el('ul');
+  [`Locked to engine version ${ENG.ENGINE_VERSION}. A future version will refuse it rather than
+    regenerate something different.`,
+   'Checksummed — a mistyped character is rejected outright, never silently accepted as a different schedule.',
+   'The characters 0, O, 1 and I are never used, so they cannot be confused.'
+  ].forEach(x=>ul.appendChild(el('li',null,x)));
+  p.appendChild(ul);
+
+  p.appendChild(el('h3',null,'Schedule summary'));
+  const st=S.result.steps, tot=st.reduce((a,s)=>a+(s.weeks||0),0);
+  const t=el('table');
+  [['Medications',MED_LABEL[S.medKey]],
+   ['Starting dose',ENG.regimenEq(st[0].regimen)+'mg diazepam-equivalent'],
+   ['Start date',fmtLong(S.startDate)],
+   ['Total duration',`${tot} weeks (${(tot/52).toFixed(1)} years)`],
+   ['Dose sequences',`${st.filter(s=>s.provenance==='ashton').length} steps reproduce dose `+
+     `sequences from published schedules; ${st.filter(s=>s.provenance==='extrapolated').length} `+
+     `generated by this tool`],
+   ['Durations',`Set by the prescriber`+(st.some(s=>durationNote(s))
+     ? `; ${st.filter(s=>durationNote(s)).length} step(s) outside the published range` : '')],
+   ['Cited source enters at',S.result.joinAt.replace(/^s(\d+)_/,'Schedule $1, stage ').replace('start','starting dosage')+' (Ashton 2002)'],
+  ].forEach(([k,v])=>{ const tr=el('tr'); tr.appendChild(el('th',null,k)); tr.appendChild(el('td',null,v)); t.appendChild(tr); });
+  p.appendChild(t);
+  p.appendChild(footer(code)); return p;
+}
+
+function selectDoc(id){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.doc===id));
+  ['doc-hand','doc-disp','doc-code'].forEach(d=>{
+    const n=$(d); if(n) n.classList.toggle('hidden', d!==id);
+  });
+}
+
+/* ---------- code loading ---------- */
+function loadCode(){
+  const out=$('code-err'); out.innerHTML='';
+  const res=CODEC.decode($('code-in').value, ENG);
+  if(res.error){ out.innerHTML=`<div class="err">${esc(res.error)}</div>`; return; }
+  S.medKey=res.medKey; S.freqs=res.freqs; S.doses=res.doses; S.startDate=res.startDate;
+  $('start-date').value=fmt(res.startDate);
+  buildMedOpts(); buildFreq(); refresh();
+  const gen=ENG.generate(DATA,{regimen:currentRegimen()});
+  if(gen.error){ out.innerHTML=`<div class="err">${esc(gen.error)}</div>`; return; }
+  S.result=gen;
+  if(res.weekPlan&&res.weekPlan.type==='explicit') S.weeks=res.weekPlan.weeks.slice();
+  else if(res.weekPlan&&res.weekPlan.type==='offset')
+    S.weeks=gen.steps.map(s=>s.weeks_default===0?0:Math.max(1,Math.min(4,s.weeks_default+res.weekPlan.offset)));
+  else S.weeks=gen.steps.map(s=>s.weeks_default);
+  if(S.weeks.length!==gen.steps.length) S.weeks=gen.steps.map(s=>s.weeks_default);
+  applyWeeks(); renderWork(); show('scr-work');
+}
+
+/* ---------- transparency: equivalence table and rule set ---------- */
+const HALF_LIFE = { alprazolam:'6\u201312 h', lorazepam:'10\u201320 h',
+                    clonazepam:'18\u201350 h', diazepam:'20\u2013100 h [36\u2013200]' };
+const EQUIV_MG  = { alprazolam:0.5, lorazepam:1, clonazepam:0.5, diazepam:10 };
+function buildEquivTable(){
+  const t=$('equiv-table'); if(!t) return; t.innerHTML='';
+  const hr=el('tr');
+  ['Medication','Approx. equivalent to 10mg diazepam','Multiplier used','Half-life (hrs)']
+    .forEach(h=>hr.appendChild(el('th',null,h)));
+  t.appendChild(hr);
+  for(const d of ['alprazolam','lorazepam','clonazepam','diazepam']){
+    const tr=el('tr');
+    tr.appendChild(el('td',null,d[0].toUpperCase()+d.slice(1)));
+    tr.appendChild(el('td',null,EQUIV_MG[d]+' mg'));
+    tr.appendChild(el('td',null,'\u00d7 '+ENG.EQ[d]));
+    tr.appendChild(el('td',null,HALF_LIFE[d]));
+    t.appendChild(tr);
+  }
+}
+function buildRules(){
+  const box=$('rules-block'); if(!box) return; box.innerHTML='';
+  const R=ENG.RULES;
+  const sec=(title,items)=>{
+    box.appendChild(el('h4',null,title));
+    if(Array.isArray(items)){ const ul=el('ul');
+      items.forEach(x=>ul.appendChild(el('li',null,x))); box.appendChild(ul); }
+    else box.appendChild(el('p',null,items));
+  };
+  sec('Order of operations', R.phases);
+  sec('Substituting to diazepam', R.crossover);
+  sec('Reducing the dose', R.reduction);
+  sec('Dispensing', R.dispensing);
+  sec('Step durations', R.duration);
+  sec('Upper limit', R.ceiling);
+}
+
+function renderDispNote(){
+  const n=$('disp-note'); if(!n) return;
+  const w=S.disp.weeks;
+  const periods=S.dispensing||[];
+  const groups=periods.length?ENG.groupIntoPrescriptions(periods):[];
+  let html = S.disp.fromInvalid
+    ? `<div class="err">That date could not be read. Use mm/dd/yy, with a year between 2020 and 2109. Showing the whole schedule instead.</div>`
+    : '';
+  html+=`<p class="small" style="margin:10px 0 0">${periods.length} fill`+
+    `${periods.length===1?'':'s'} across <strong>${groups.length} prescription`+
+    `${groups.length===1?'':'s'}</strong> for the remaining schedule.</p>`;
+  if(w<4) html+=`<div class="note">Dispensing less than four weeks at a time is usually done `+
+    `where there is concern about overuse, diversion, or adherence \u2014 it increases the number `+
+    `of prescriber contacts. It does not change the taper itself.</div>`;
+  html+=`<p class="small">Dispensing choices are <strong>not stored in the schedule code</strong>. `+
+    `The code regenerates the taper; how it is dispensed is chosen fresh each visit.</p>`;
+  n.innerHTML=html;
+}
+function refreshDispensing(){
+  applyWeeks(); renderDocs(); renderDispNote();
+}
+
+/* ---------- wiring ---------- */
+$('btn-agree').onclick=()=>{ show('scr-setup'); buildMedOpts(); buildEquivTable(); refresh(); };
+$('btn-info-gate').onclick=()=>{ S._back='scr-gate'; buildRules(); show('scr-info'); };
+$('btn-info').onclick=()=>{ S._back='scr-setup'; buildRules(); show('scr-info'); };
+$('btn-info-back').onclick=()=>show(S._back||'scr-setup');
+$('btn-today').onclick=()=>{ const d=new Date(); S.startDate=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  $('start-date').value=fmt(S.startDate); refresh(); };
+$('start-date').oninput=()=>{ S.startDate=parseDate($('start-date').value); refresh(); };
+$('btn-run').onclick=run;
+$('btn-load').onclick=loadCode;
+$('code-in').onkeydown=e=>{ if(e.key==='Enter') loadCode(); };
+$('btn-wk-plus').onclick=()=>shiftWeeks(1);
+$('btn-wk-minus').onclick=()=>shiftWeeks(-1);
+$('btn-reset').onclick=()=>{ S.weeks=weekDefaults(); applyWeeks(); renderWork(); };
+$('btn-back').onclick=()=>show('scr-setup');
+$('btn-finalize').onclick=()=>{ if(!S.result) return; renderDocs(); renderDispNote(); show('scr-out'); };
+$('disp-weeks').onchange=()=>{ S.disp.weeks=parseInt($('disp-weeks').value,10); refreshDispensing(); };
+$('disp-next-only').onchange=()=>{ S.disp.nextOnly=$('disp-next-only').checked; renderDocs(); renderDispNote(); };
+$('disp-from').oninput=()=>{
+  const raw=$('disp-from').value.trim();
+  S.disp.from=parseDate(raw);
+  S.disp.fromInvalid = raw!=='' && !S.disp.from;
+  refreshDispensing(); };
+$('btn-disp-today').onclick=()=>{ const d=new Date();
+  S.disp.from=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  $('disp-from').value=fmt(S.disp.from); refreshDispensing(); };
+$('btn-disp-start').onclick=()=>{ S.disp.from=null; $('disp-from').value=''; refreshDispensing(); };
+$('btn-work').onclick=()=>show('scr-work');
+$('btn-restart').onclick=()=>{
+  // Everything patient-specific, or the next patient inherits the last one's dates.
+  S.medKey=null; S.freqs={}; S.doses={}; S.result=null; S.weeks=null; S.code=null;
+  S.startDate=null; S.dispensing=null; S.dispensingFull=null; S._tab='doc-hand';
+  S.disp={ weeks:4, from:null, nextOnly:false };
+  $('code-in').value=''; $('code-err').innerHTML='';
+  $('start-date').value=''; $('run-err').innerHTML='';
+  if($('disp-from')) $('disp-from').value='';
+  if($('disp-weeks')) $('disp-weeks').value='4';
+  if($('disp-next-only')) $('disp-next-only').checked=false;
+  buildMedOpts(); buildFreq(); refresh(); show('scr-setup'); };
+$('btn-print').onclick=()=>window.print();
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ S._tab=b.dataset.doc; selectDoc(b.dataset.doc); });
+</script>
+</body>
+</html>
