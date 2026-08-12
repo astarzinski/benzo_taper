@@ -20,3 +20,6 @@ __pycache__/
 /tmp/
 *.log
 out.pdf
+
+# stale artifacts from a failed git operation; not part of the app
+_to_delete/

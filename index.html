@@ -71,12 +71,21 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
 .page table tbody,.page table thead{display:table;width:100%}
 #equiv-table{display:block;overflow-x:auto;max-width:100%}
 .page h2:first-child{margin-top:0}
-.wm{position:fixed;inset:0;pointer-events:none;user-select:none;-webkit-user-select:none;z-index:5}
-#global-wm{display:none}
-.wm .big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.wm .big span{transform:rotate(-45deg);font-size:52px;font-weight:800;letter-spacing:.06em;
-  color:#000;opacity:.10;text-align:center;line-height:1.15;white-space:pre-line}
-.wm .stamp-line{display:none}
+/* Watermarking is done by stamping one absolutely-positioned block per printed page
+   down the document, NOT by position:fixed. Fixed elements repeat per page only in
+   Chrome; Safari and Firefox paint them once, mid-document. */
+#wm-layer{display:none}
+@media print{
+  #wm-layer{display:block;position:absolute;top:0;left:0;right:0;height:0;
+    overflow:visible;pointer-events:none;user-select:none;-webkit-user-select:none;z-index:5}
+  .wm-sheet{position:absolute;left:0;right:0;height:var(--page-h);
+    display:flex;align-items:center;justify-content:center}
+  .wm-sheet span{transform:rotate(-45deg);font-size:64px;font-weight:800;letter-spacing:.06em;
+    color:#000;opacity:.13;text-align:center;line-height:1.15;white-space:pre-line}
+  .wm-sheet .stamp{position:absolute;left:0;right:0;bottom:0;transform:none;
+    font:9px/1.4 ui-monospace,Menlo,monospace;color:#444;text-align:center;opacity:1;
+    border-top:1px solid #bbb;padding-top:3px;white-space:normal;font-weight:400;letter-spacing:0}
+}
 .docfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:#333}
 .docfoot .stamp{font-family:ui-monospace,Menlo,monospace;margin-top:6px;color:#555}
 .hand{font-size:16px}
@@ -93,17 +102,9 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
   .page + .page{page-break-before:always}
   /* every finalized document prints, not just the tab on screen */
   .page.hidden{display:block !important}
-  /* Watermark is a fixed CONTENT element, not a background: browsers do not print
-     background-image/background-color by default, which would silently drop it.
-     Fixed positioning makes it repeat on every printed page. */
-  /* The watermark container is fixed, so it — and everything inside it — repeats on
-     every printed sheet. The per-page identification strip rides along inside it. */
-  .wm{position:fixed;inset:0}
-  .wm .big span{font-size:64px;opacity:.13}
-  #global-wm{display:block}
-  .wm .stamp-line{display:block;position:absolute;left:0;right:0;bottom:0;
-    font:9px/1.4 ui-monospace,Menlo,monospace;color:#444;text-align:center;
-    border-top:1px solid #bbb;padding-top:3px}
+  /* Watermarks are real content elements, not backgrounds: browsers do not print
+     background-image or background-color by default, which would silently drop them. */
+  body{position:relative}
   tr,.keep{page-break-inside:avoid}
   .page table,#equiv-table{display:table;overflow:visible}   /* print unclipped */
   thead{display:table-header-group}
@@ -292,11 +293,7 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
     </div>
   </div>
   <div id="docs"></div>
-<div class="wm" id="global-wm" aria-hidden="true">
-  <div class="big"><span>NOT A PRESCRIPTION
-PRESCRIBER REVIEW REQUIRED</span></div>
-  <div class="stamp-line" id="stamp-line"></div>
-</div>
+<div id="wm-layer" aria-hidden="true"></div>
 </div>
 
 <!-- ============ INFO SHEET ============ -->
@@ -1448,6 +1445,42 @@ function makeCode(){
     weeks:S.weeks, weekDefaults:weekDefaults() }, ENG);
   }catch(e){ return 'UNAVAILABLE'; }
 }
+/* One watermark block per printed page, laid down the document at exact page-height
+   intervals. Letter minus the @page margins (14mm top, 22mm bottom) is 9.583in of
+   content per sheet; expressing the offsets in inches lets the browser do the
+   inch-to-pixel conversion, so this holds at any print scale. */
+const PAGE_CONTENT_IN = 9.583;
+function layoutWatermarks(){
+  const layer=$('wm-layer'); if(!layer) return;
+  layer.innerHTML='';
+  // Measure the printed height of the documents, in inches, using a probe so we do not
+  // assume 96 CSS pixels per inch.
+  const probe=document.createElement('div');
+  probe.style.cssText='position:absolute;visibility:hidden;height:10in;pointer-events:none';
+  document.body.appendChild(probe);
+  const pxPerIn=(probe.offsetHeight||960)/10;
+  probe.remove();
+  const docs=$('docs');
+  const heightIn=docs?docs.scrollHeight/pxPerIn:0;
+  // Documents each start on a new sheet, so allow one extra per document, plus slack.
+  // Overshooting is free: the layer has zero height, so surplus blocks sit past the end
+  // of the content and generate no extra pages (verified). We therefore keep a generous
+  // floor, so coverage holds even in a browser that never fires beforeprint or that
+  // measures the print layout poorly.
+  const MIN_SHEETS=120;
+  const sheets=Math.max(MIN_SHEETS,
+    Math.ceil(heightIn/PAGE_CONTENT_IN) + (docs?docs.children.length:0) + 1);
+  for(let i=0;i<sheets;i++){
+    const s=el('div','wm-sheet');
+    s.style.top=(i*PAGE_CONTENT_IN)+'in';
+    s.style.setProperty('--page-h',PAGE_CONTENT_IN+'in');
+    s.appendChild(el('span',null,'NOT A PRESCRIPTION\nPRESCRIBER REVIEW REQUIRED'));
+    s.appendChild(el('div','stamp',S.stampText||''));
+    layer.appendChild(s);
+  }
+}
+window.addEventListener('beforeprint',layoutWatermarks);
+
 function watermark(code){
   const d=el('div','wm');
   const big=el('div','big');
@@ -1476,15 +1509,17 @@ function footer(code){
 }
 function page(code,cls){ return el('div','page'+(cls?' '+cls:'')); }
 
+
 function renderDocs(){
   const code=S.code=makeCode();
   const box=$('docs'); box.innerHTML='';
   box.appendChild(handoutDoc(code));
   box.appendChild(dispensingDoc(code));
   box.appendChild(codeDoc(code));
-  $('stamp-line').textContent =
+  S.stampText =
     `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
     `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`;
+  layoutWatermarks();
   selectDoc(S._tab||'doc-hand');
 }
 function activeSteps(){ return S.result.steps.filter(s=>s.weeks>0&&Object.keys(s.regimen).length); }

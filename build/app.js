@@ -234,6 +234,42 @@ function makeCode(){
     weeks:S.weeks, weekDefaults:weekDefaults() }, ENG);
   }catch(e){ return 'UNAVAILABLE'; }
 }
+/* One watermark block per printed page, laid down the document at exact page-height
+   intervals. Letter minus the @page margins (14mm top, 22mm bottom) is 9.583in of
+   content per sheet; expressing the offsets in inches lets the browser do the
+   inch-to-pixel conversion, so this holds at any print scale. */
+const PAGE_CONTENT_IN = 9.583;
+function layoutWatermarks(){
+  const layer=$('wm-layer'); if(!layer) return;
+  layer.innerHTML='';
+  // Measure the printed height of the documents, in inches, using a probe so we do not
+  // assume 96 CSS pixels per inch.
+  const probe=document.createElement('div');
+  probe.style.cssText='position:absolute;visibility:hidden;height:10in;pointer-events:none';
+  document.body.appendChild(probe);
+  const pxPerIn=(probe.offsetHeight||960)/10;
+  probe.remove();
+  const docs=$('docs');
+  const heightIn=docs?docs.scrollHeight/pxPerIn:0;
+  // Documents each start on a new sheet, so allow one extra per document, plus slack.
+  // Overshooting is free: the layer has zero height, so surplus blocks sit past the end
+  // of the content and generate no extra pages (verified). We therefore keep a generous
+  // floor, so coverage holds even in a browser that never fires beforeprint or that
+  // measures the print layout poorly.
+  const MIN_SHEETS=120;
+  const sheets=Math.max(MIN_SHEETS,
+    Math.ceil(heightIn/PAGE_CONTENT_IN) + (docs?docs.children.length:0) + 1);
+  for(let i=0;i<sheets;i++){
+    const s=el('div','wm-sheet');
+    s.style.top=(i*PAGE_CONTENT_IN)+'in';
+    s.style.setProperty('--page-h',PAGE_CONTENT_IN+'in');
+    s.appendChild(el('span',null,'NOT A PRESCRIPTION\nPRESCRIBER REVIEW REQUIRED'));
+    s.appendChild(el('div','stamp',S.stampText||''));
+    layer.appendChild(s);
+  }
+}
+window.addEventListener('beforeprint',layoutWatermarks);
+
 function watermark(code){
   const d=el('div','wm');
   const big=el('div','big');
@@ -262,15 +298,17 @@ function footer(code){
 }
 function page(code,cls){ return el('div','page'+(cls?' '+cls:'')); }
 
+
 function renderDocs(){
   const code=S.code=makeCode();
   const box=$('docs'); box.innerHTML='';
   box.appendChild(handoutDoc(code));
   box.appendChild(dispensingDoc(code));
   box.appendChild(codeDoc(code));
-  $('stamp-line').textContent =
+  S.stampText =
     `NOT A PRESCRIPTION — PRESCRIBER REVIEW REQUIRED · benzo-taper v${APP_VERSION} ` +
     `(engine v${ENG.ENGINE_VERSION}) · Code ${code} · CONTAINS PHI · ${fmtLong(new Date())}`;
+  layoutWatermarks();
   selectDoc(S._tab||'doc-hand');
 }
 function activeSteps(){ return S.result.steps.filter(s=>s.weeks>0&&Object.keys(s.regimen).length); }
