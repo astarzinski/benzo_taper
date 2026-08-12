@@ -273,10 +273,19 @@ function splittable(n){
 }
 function sanitise(n){ n.classList.remove('hidden'); n.removeAttribute('id'); return n; }
 
+/* Set false whenever the documents change, true once they have been paginated.
+   Safari lays the print document out, fires beforeprint, then lays it out again;
+   rebuilding #printroot inside that handler moved the DOM under it and its preview
+   showed both passes, one after the other. Now the handler only does work when
+   there is work to do, so an unchanged document is never rebuilt mid-print. */
+let pgClean=false;
+function invalidatePagination(){ pgClean=false; }
+
 function paginate(){
   const root=$('printroot'), src=$('docs');
   document.body.classList.remove('paginated');
-  if(!root||!src||!src.children.length) return 0;
+  pgClean=false;
+  if(!root||!src||!src.children.length){ if(root) root.innerHTML=''; return 0; }
   root.innerHTML='';
   root.classList.add('measuring');
   const PX_IN=pxPerInch();
@@ -407,9 +416,14 @@ function paginate(){
 
   root.classList.remove('measuring');
   document.body.classList.add('paginated');
+  pgClean=true;
   return root.children.length;
 }
-window.addEventListener('beforeprint',paginate);
+window.addEventListener('beforeprint',()=>{
+  const root=$('printroot');
+  if(pgClean && root && root.children.length) return;   // already correct — leave it alone
+  paginate();
+});
 
 function footer(code){
   const f=el('div','docfoot');
@@ -803,6 +817,10 @@ $('btn-restart').onclick=()=>{
   if($('disp-from')) $('disp-from').value='';
   if($('disp-weeks')) $('disp-weeks').value='4';
   if($('disp-next-only')) $('disp-next-only').checked=false;
+  S.stampText='';
+  if($('docs')) $('docs').innerHTML='';
+  if($('printroot')) $('printroot').innerHTML='';   // paginated copy carries PHI too
+  document.body.classList.remove('paginated'); invalidatePagination();
   buildMedOpts(); buildFreq(); refresh(); show('scr-setup'); };
 $('btn-print').onclick=()=>window.print();
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ S._tab=b.dataset.doc; selectDoc(b.dataset.doc); });
