@@ -77,9 +77,13 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
    `position:fixed` repeats per page only in Chrome, and Safari has never repeated
    <thead>/<tfoot> across pages (WebKit bug 17205, open since 2008). Nor can CSS
    report the printed page height, so anything positioned by arithmetic drifts.
-   So the document is paginated here instead: content is packed into fixed-height
-   .pg blocks that each force a page break, and each block carries its own footer.
-   Geometry is then ours, identical in every engine.
+   So the document is paginated here instead: content is packed into .pg blocks
+   that each force a page break, and each block carries its own footer.
+
+   A .pg is deliberately given NO height. It is exactly as tall as what it holds,
+   which is capped well below any plausible printable area. A fixed height taller
+   than the real printable area — which cannot be known — makes every block spill a
+   sliver onto a following page, and a 25-page document prints as 50.
 
    .pv carries the print typography and is applied both while measuring off-screen
    and while printing, so what is measured is what is printed. */
@@ -89,11 +93,10 @@ th{background:#eef1f4;font-size:12px;text-transform:uppercase;letter-spacing:.04
 .pv .page{border:none;border-radius:0;padding:0;margin:0;background:#fff;display:block}
 .pv .page table{display:table;overflow:visible;max-width:none;width:100%}
 .pv .page table tbody,.pv .page table thead{display:table-row-group}
-.pg{position:relative;height:var(--pg-h);overflow:visible;box-sizing:border-box}
+.pg{position:relative;overflow:visible;box-sizing:border-box}
 .pgbody{display:flow-root}          /* stops child margins collapsing out of the measure */
-.pgfoot{position:absolute;left:0;right:0;bottom:0;
-  font:9px/1.35 ui-monospace,Menlo,monospace;color:#444;text-align:center;
-  border-top:1px solid #bbb;padding-top:3px}
+.pgfoot{margin-top:14px;font:9px/1.35 ui-monospace,Menlo,monospace;color:#444;
+  text-align:center;border-top:1px solid #bbb;padding-top:3px}
 .docfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:#333}
 .docfoot .stamp{font-family:ui-monospace,Menlo,monospace;margin-top:6px;color:#555}
 .hand{font-size:16px}

@@ -246,11 +246,17 @@ function makeCode(){
    each of which forces a page break and carries its own footer. The geometry is
    then ours and is identical in every engine. Nothing is ever clipped: a block
    that cannot be split is allowed to overflow rather than be dropped. */
-const PG_H_IN   = 9.0;    /* page block height. Letter gives 9.9in of content box at
-                             14mm margins and A4 gives 10.6in, less roughly 0.2in that
-                             Safari reserves for its own header and footer. 9.0in
-                             leaves better than half an inch of slack on either paper. */
-const PG_FOOT_IN = 0.42;  /* reserved at the foot of every block for the stamp */
+/* Content allowed per page block, in inches. This is NOT the page height and the
+   blocks are NOT given a fixed height: a fixed height taller than the paper's real
+   printable area makes every block spill a sliver onto a following page, which is
+   how a 25-page document printed as 50. The block is exactly as tall as what it
+   holds, so it can only ever overflow if this limit is set above the printable
+   area — and it is set well below any plausible one.
+
+   Letter at 14mm margins leaves 9.9in. Safari then takes about an inch for its own
+   header and footer, measured from a real printout: roughly 8.87in survives. 8.1in
+   of content plus a footer line keeps every block under 8.5in. */
+const PG_CONTENT_IN = 8.1;
 
 function pxPerInch(){
   const probe=document.createElement('div');
@@ -289,14 +295,13 @@ function paginate(){
   root.innerHTML='';
   root.classList.add('measuring');
   const PX_IN=pxPerInch();
-  const LIMIT=PX_IN*(PG_H_IN-PG_FOOT_IN);
+  const LIMIT=PX_IN*PG_CONTENT_IN;
   const HEAD_ROOM=PX_IN*1.1;   /* a heading needs this much page left under it, or it
                                   is stranded at the foot of a page above its content */
 
   let body=null, stack=[];
   function openPage(){
     const pg=el('div','pg');
-    pg.style.setProperty('--pg-h',PG_H_IN+'in');
     body=el('div','pgbody'); pg.appendChild(body);
     const f=el('div','pgfoot'); f.textContent=S.stampText||''; pg.appendChild(f);
     root.appendChild(pg);
